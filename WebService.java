@@ -11,12 +11,11 @@ public class WebService {
 	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
 	public final static String RECEIVER_KEY = "com.pcreations.restclient.webservice.RECEIVER_KEY";
-
-	
-	private final static int GET = 0;
-	private final static int POST = 1;
-	private final static int PUT = 2;
-	private final static int DELETE = 3;
+	public final static String RESULT_KEY = "com.pcreations.restclient.webservice.RESULT_KEY";
+	public final static int GET = 0;
+	public final static int POST = 1;
+	public final static int PUT = 2;
+	public final static int DELETE = 3;
 	
 	private ResultReceiver mReceiver;
 	private Context mContext;
@@ -48,7 +47,7 @@ public class WebService {
 	private void initService(int method) {
 		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
-		mIntent.putExtra(PARAMS_KEY, mParams);
+		//mIntent.putExtra(PARAMS_KEY, mParams);
 		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
