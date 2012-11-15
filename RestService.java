@@ -2,9 +2,13 @@ package com.pcreations.restclient;
 
 import android.app.IntentService;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.Bundle;
 
 public class RestService extends IntentService{
-
+	
+	
+	
 	public RestService(String name) {
 		super(name);
 		// TODO Auto-generated constructor stub
@@ -12,8 +16,8 @@ public class RestService extends IntentService{
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		// TODO Auto-generated method stub
-		
+		Bundle bundle = intent.getExtras();
+		//Uri action = Uri.parse(bundle.getString(URI_KEY));
 	}
 
 }
