@@ -9,7 +9,6 @@ import android.os.ResultReceiver;
 public class WebService {
 
 	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
-	public final static String URI_KEY = "com.pcreations.restclient.webservice.URI_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
 	public final static String RECEIVER_KEY = "com.pcreations.restclient.webservice.RECEIVER_KEY";
 
@@ -47,9 +46,9 @@ public class WebService {
 	}
 	
 	private void initService(int method) {
+		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
 		mIntent.putExtra(PARAMS_KEY, mParams);
-		mIntent.putExtra(URI_KEY, mUri);
 		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
