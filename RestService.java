@@ -27,8 +27,8 @@ public class RestService extends IntentService{
 	
 	private final static String TAG = "Http";
 	
-	public RestService(String name) {
-		super(name);
+	public RestService() {
+		super("RestService");
 		// TODO Auto-generated constructor stub
 	}
 
