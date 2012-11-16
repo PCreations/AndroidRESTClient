@@ -1,8 +1,6 @@
 package com.pcreations.restclient;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -18,9 +16,9 @@ public class MainActivity extends Activity implements RestResultReceiver.Receive
         setContentView(R.layout.activity_main);
         mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
-        WebService ws = new WebService(this, mReceiver, "http://chupee.fr/json/countries.json");
+        WebService ws = new WebService(this, mReceiver);
         Log.i("onCreate", "ws.get()");
-        ws.get();
+        ws.get("http://chupee.fr/json/countries.json");
     }
 
 	public void onReceiveResult(int resultCode, Bundle resultData) {

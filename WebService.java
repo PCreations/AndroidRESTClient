@@ -20,34 +20,24 @@ public class WebService {
 	private ResultReceiver mReceiver;
 	private Context mContext;
 	private Uri mUri;
-	private Bundle mParams;
 	private Intent mIntent;
 	
-	public WebService(Context context, ResultReceiver receiver, String uri) {
+	public WebService(Context context, ResultReceiver receiver) {
 		super();
 		mContext = context;
-		mUri = Uri.parse(uri);
 		mReceiver = receiver;
 		mIntent = new Intent(mContext, RestService.class);
 	}
 	
-	public void setParams(Bundle params) {
-		mParams = params;
-	}
-	
-	public void addParams(String key, String value) {
-		mParams.putString(key, value);
-	}
-	
-	public void get() {
-		initService(GET);
+	public void get(String uri) {
+		initService(GET, uri);
 		startService();
 	}
 	
-	private void initService(int method) {
+	private void initService(int method, String uri) {
+		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
-		//mIntent.putExtra(PARAMS_KEY, mParams);
 		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
