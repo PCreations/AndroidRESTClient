@@ -21,7 +21,7 @@ public class MainActivity extends Activity implements RestResultReceiver.Receive
         //WebService ws = new WebService(this, mReceiver, "https://maps.googleapis.com/maps/api/place/details/json?reference=CmRYAAAAciqGsTRX1mXRvuXSH2ErwW-jCINE1aLiwP64MCWDN5vkXvXoQGPKldMfmdGyqWSpm7BEYCgDm-iv7Kc2PF7QA7brMAwBbAcqMr5i1f4PwTpaovIZjysCEZTry8Ez30wpEhCNCXpynextCld2EBsDkRKsGhSLayuRyFsex6JA6NPh9dyupoTH3g&sensor=true&key=AIzaSyAir6DKOMRfmXyHgXGHgHSg_FovG7yuMYY");
         Log.i("onCreate", "ws.get()");
         Intent intent = new Intent(MainActivity.this, RestService.class);
-        intent.setData(Uri.parse("https://maps.googleapis.com/maps/api/place/details/json?reference=CmRYAAAAciqGsTRX1mXRvuXSH2ErwW-jCINE1aLiwP64MCWDN5vkXvXoQGPKldMfmdGyqWSpm7BEYCgDm-iv7Kc2PF7QA7brMAwBbAcqMr5i1f4PwTpaovIZjysCEZTry8Ez30wpEhCNCXpynextCld2EBsDkRKsGhSLayuRyFsex6JA6NPh9dyupoTH3g&sensor=true&key=AIzaSyAir6DKOMRfmXyHgXGHgHSg_FovG7yuMYY"));
+        intent.setData(Uri.parse("http://chupee.fr/json/countries.json"));
         intent.putExtra(WebService.METHOD_KEY, WebService.GET);
         intent.putExtra(WebService.RECEIVER_KEY, mReceiver);
         this.startService(intent);
