@@ -17,7 +17,6 @@ public class MainActivity extends Activity implements RestResultReceiver.Receive
         mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
         WebService ws = new WebService(this, mReceiver);
-        Log.i("onCreate", "ws.get()");
         ws.get("http://chupee.fr/json/countries.json");
     }
 
