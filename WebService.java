@@ -1,9 +1,11 @@
 package com.pcreations.restclient;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.ResultReceiver;
 
 public class WebService {
@@ -47,6 +49,10 @@ public class WebService {
 	
 	public ResultReceiver getReceiver() {
 		return mReceiver;
+	}
+	
+	public InputStream getJSONResult(String result) {
+		return new ByteArrayInputStream(result.getBytes());
 	}
 
 	public void setReceiver(ResultReceiver mReceiver) {

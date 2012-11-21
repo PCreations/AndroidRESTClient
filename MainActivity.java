@@ -23,6 +23,7 @@ public class MainActivity extends Activity implements RestResultReceiver.Receive
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d("resultCode", String.valueOf(resultCode));
 		Log.d("resultData", resultData.getString(WebService.RESULT_KEY));
+		//WebService.getJSONResult(resultData.getString(WebService.RESULT_KEY));
 	}
 
     
