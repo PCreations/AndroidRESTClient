@@ -51,7 +51,7 @@ public class WebService {
 		return mReceiver;
 	}
 	
-	public InputStream getJSONResult(String result) {
+	public static InputStream getJSONResult(String result) {
 		return new ByteArrayInputStream(result.getBytes());
 	}
 
