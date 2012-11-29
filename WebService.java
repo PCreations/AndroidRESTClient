@@ -19,15 +19,22 @@ public class WebService {
 	public final static int PUT = 2;
 	public final static int DELETE = 3;
 	
-	private ResultReceiver mReceiver;
 	private Context mContext;
 	private Uri mUri;
 	private Intent mIntent;
+	private static WebService ws;
 	
-	public WebService(Context context, ResultReceiver receiver) {
+	public static WebService getInstance(Context context) {
+		if(null == ws) {
+			ws = new WebService(context);
+		}
+		ws.setContext(context);
+		return ws;
+	}
+	
+	private WebService(Context context) {
 		super();
 		mContext = context;
-		mReceiver = receiver;
 		mIntent = new Intent(mContext, RestService.class);
 	}
 	
@@ -40,23 +47,18 @@ public class WebService {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
-		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
 	private void startService() {
 		mContext.startService(mIntent);
 	}
 	
-	public ResultReceiver getReceiver() {
-		return mReceiver;
-	}
-	
 	public static InputStream getJSONResult(String result) {
 		return new ByteArrayInputStream(result.getBytes());
 	}
 
-	public void setReceiver(ResultReceiver mReceiver) {
-		this.mReceiver = mReceiver;
+	public void setContext(Context context) {
+		mContext = context;
 	}
 
 	public Uri getUri() {
