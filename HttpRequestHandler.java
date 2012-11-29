@@ -2,12 +2,12 @@ package com.pcreations.restclient;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
-import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
-import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -32,7 +32,13 @@ public class HttpRequestHandler {
 	}
 	
 	public Bundle get(String url) {
-		mRequest = new HttpGet(url);
+		mRequest = new HttpGet();
+		try {
+			mRequest.setURI(new URI(url));
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		Log.d(LOG, "Executing GET request: " + url);
 		return processRequest();
 	}
@@ -57,12 +63,14 @@ public class HttpRequestHandler {
 		Bundle result = null;
 		try {
 			response = mHttpClient.execute(mRequest);
-			HttpEntity responseEntity = response.getEntity();
+			/*HttpEntity responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
 			int        statusCode     = responseStatus != null ? responseStatus.getStatusCode() : 0;
 			result = new Bundle();
 			result.putInt(STATUS_CODE_KEY, statusCode);
 			result.putString(RESPONSE_KEY, responseEntity.toString());
+			Log.d(LOG, "result code : " + String.valueOf(statusCode));
+			Log.d(LOG, "result string : " + responseEntity.toString());*/
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
