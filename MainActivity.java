@@ -14,8 +14,12 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Log.d("REST", "HttpRequestHandler test");
-        HttpRequestHandler request = new HttpRequestHandler();
-        request.get("http://chupee.fr/json/countries.json");
+        new Thread(new Runnable() {
+        public void run() {
+        	HttpRequestHandler request = new HttpRequestHandler();
+            request.get("http://chupee.fr/json/countries.json");
+        }
+      }).start(); 
     }
    
 }
