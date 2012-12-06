@@ -6,9 +6,11 @@ import java.io.InputStream;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.ResultReceiver;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 
-public class WebService {
+public class WebService implements RestResultReceiver.Receiver{
 
 	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
@@ -19,7 +21,7 @@ public class WebService {
 	public final static int PUT = 2;
 	public final static int DELETE = 3;
 	
-	private ResultReceiver mReceiver;
+	private RestResultReceiver mReceiver;
 	private Context mContext;
 	private Uri mUri;
 	private Intent mIntent;
@@ -27,8 +29,9 @@ public class WebService {
 	public WebService(Context context) {
 		super();
 		mContext = context;
-		mReceiver = receiver;
 		mIntent = new Intent(mContext, RestService.class);
+		mReceiver = new RestResultReceiver(new Handler());
+        mReceiver.setReceiver(this);
 	}
 	
 	public void get(String uri) {
@@ -47,16 +50,8 @@ public class WebService {
 		mContext.startService(mIntent);
 	}
 	
-	public ResultReceiver getReceiver() {
-		return mReceiver;
-	}
-	
 	public static InputStream getJSONResult(String result) {
 		return new ByteArrayInputStream(result.getBytes());
-	}
-
-	public void setReceiver(ResultReceiver mReceiver) {
-		this.mReceiver = mReceiver;
 	}
 
 	public Uri getUri() {
@@ -65,6 +60,13 @@ public class WebService {
 
 	public void setUri(Uri mUri) {
 		this.mUri = mUri;
+	}
+
+	@Override
+	public void onReceiveResult(int resultCode, Bundle resultData) {
+		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
+		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
+		
 	}
 	
 	

@@ -23,7 +23,7 @@ import android.os.Bundle;
 import android.os.ResultReceiver;
 import android.util.Log;
 
-public class RestService extends IntentService implements RestResultReceiver.Receiver{
+public class RestService extends IntentService{
 	
 	private final static String TAG = "Http";
 	
@@ -34,6 +34,7 @@ public class RestService extends IntentService implements RestResultReceiver.Rec
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
+		for(int i=0; i<1000000; i++){}
 		Uri uri = intent.getData();
 		Bundle bundle = intent.getExtras();
 		int method = bundle.getInt(WebService.METHOD_KEY);
@@ -107,12 +108,6 @@ public class RestService extends IntentService implements RestResultReceiver.Rec
 	        Log.e(TAG, "There was a problem when sending the request.", e);
 	        receiver.send(0, null);
 	    }
-	}
-
-	@Override
-	public void onReceiveResult(int resultCode, Bundle resultData) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }
