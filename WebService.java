@@ -64,9 +64,7 @@ public class WebService implements RestResultReceiver.Receiver{
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
 		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
-		InputStream result = new ByteArrayInputStream(resultData.getString(RESULT_KEY).getBytes());
-		mParser = new CountryParser(mContext);
-		mParser.parse(result);
+		
 	}
 	
 	

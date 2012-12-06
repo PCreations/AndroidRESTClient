@@ -9,6 +9,7 @@ import android.os.ResultReceiver;
 public class RestService extends IntentService{
 	
 	private final static String TAG = "Http";
+	private Processor mProcessor;
 	
 	public RestService() {
 		super("RestService");
@@ -34,6 +35,7 @@ public class RestService extends IntentService{
         }
         Bundle resultData = new Bundle();
         resultData.putString(HttpRequestHandler.RESPONSE_KEY, requestResult.getString(HttpRequestHandler.RESPONSE_KEY));
+        mProcessor.parse(resultData);
         receiver.send(requestResult.getInt(HttpRequestHandler.STATUS_CODE_KEY), resultData);
 	}
 
