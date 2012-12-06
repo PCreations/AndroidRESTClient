@@ -5,13 +5,15 @@ import android.os.Bundle;
 
 import com.pcreations.rest.R;
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  {
 
-	public RestResultReceiver mReceiver;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        WebService ws = new WebService(this);
+        ws.get("http://chupee.fr/json/countries.json");
     }
-   
+    
 }

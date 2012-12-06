@@ -1,18 +1,14 @@
 package com.pcreations.restclient;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.List;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -25,8 +21,8 @@ import android.util.Log;
 public class HttpRequestHandler {
 
 	private static final String LOG = HttpRequestHandler.class.getName();
-	private static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequstHandler.STATUS_CODE";
-	private static final String RESPONSE_KEY = "com.pcreations.restclient.HttpRequestHandler.RESPONSE";
+	public static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequstHandler.STATUS_CODE";
+	public static final String RESPONSE_KEY = "com.pcreations.restclient.HttpRequestHandler.RESPONSE";
 	private HttpClient mHttpClient;
 	private HttpRequestBase mRequest;
 	
@@ -46,15 +42,12 @@ public class HttpRequestHandler {
 		return processRequest();
 	}
 	
-	public Bundle post(String url, List<NameValuePair> params) {
+	public Bundle post(String url) {
 		mRequest = new HttpPost(url);
 		mRequest.setHeader("Content-Type", "application/json");
-		UrlEncodedFormEntity query;
 		try {
-			query = new UrlEncodedFormEntity(params);
-			((HttpResponse) mRequest).setEntity(query);
-			Log.d(LOG, "Executing POST request: " + url);
-		} catch (UnsupportedEncodingException e) {
+			mRequest.setURI(new URI(url));
+		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

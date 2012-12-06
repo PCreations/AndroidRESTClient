@@ -6,8 +6,11 @@ import java.io.InputStream;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 
-public class WebService {
+public class WebService implements RestResultReceiver.Receiver{
 
 	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
@@ -18,23 +21,17 @@ public class WebService {
 	public final static int PUT = 2;
 	public final static int DELETE = 3;
 	
+	private RestResultReceiver mReceiver;
 	private Context mContext;
 	private Uri mUri;
 	private Intent mIntent;
-	private static WebService ws;
 	
-	public static WebService getInstance(Context context) {
-		if(null == ws) {
-			ws = new WebService(context);
-		}
-		ws.setContext(context);
-		return ws;
-	}
-	
-	private WebService(Context context) {
+	public WebService(Context context) {
 		super();
 		mContext = context;
 		mIntent = new Intent(mContext, RestService.class);
+		mReceiver = new RestResultReceiver(new Handler());
+        mReceiver.setReceiver(this);
 	}
 	
 	public void get(String uri) {
@@ -46,6 +43,7 @@ public class WebService {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
+		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
 	private void startService() {
@@ -56,16 +54,19 @@ public class WebService {
 		return new ByteArrayInputStream(result.getBytes());
 	}
 
-	public void setContext(Context context) {
-		mContext = context;
-	}
-
 	public Uri getUri() {
 		return mUri;
 	}
 
 	public void setUri(Uri mUri) {
 		this.mUri = mUri;
+	}
+
+	@Override
+	public void onReceiveResult(int resultCode, Bundle resultData) {
+		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
+		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
+		
 	}
 	
 	
