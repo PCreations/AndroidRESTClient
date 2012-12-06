@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import fr.chupee.jsonparser.parser.CountryParser;
 
 public class WebService implements RestResultReceiver.Receiver{
 
@@ -25,6 +26,7 @@ public class WebService implements RestResultReceiver.Receiver{
 	private Context mContext;
 	private Uri mUri;
 	private Intent mIntent;
+	private CountryParser mParser;
 	
 	public WebService(Context context) {
 		super();
@@ -50,10 +52,6 @@ public class WebService implements RestResultReceiver.Receiver{
 		mContext.startService(mIntent);
 	}
 	
-	public static InputStream getJSONResult(String result) {
-		return new ByteArrayInputStream(result.getBytes());
-	}
-
 	public Uri getUri() {
 		return mUri;
 	}
@@ -66,7 +64,9 @@ public class WebService implements RestResultReceiver.Receiver{
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
 		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
-		
+		InputStream result = new ByteArrayInputStream(resultData.getString(RESULT_KEY).getBytes());
+		mParser = new CountryParser(mContext);
+		mParser.parse(result);
 	}
 	
 	

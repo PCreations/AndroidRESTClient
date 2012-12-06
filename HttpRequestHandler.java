@@ -21,7 +21,7 @@ import android.util.Log;
 public class HttpRequestHandler {
 
 	private static final String LOG = HttpRequestHandler.class.getName();
-	public static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequstHandler.STATUS_CODE";
+	public static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequestHandler.STATUS_CODE";
 	public static final String RESPONSE_KEY = "com.pcreations.restclient.HttpRequestHandler.RESPONSE";
 	private HttpClient mHttpClient;
 	private HttpRequestBase mRequest;
@@ -64,9 +64,10 @@ public class HttpRequestHandler {
 			int        statusCode     = responseStatus != null ? responseStatus.getStatusCode() : 0;
 			result = new Bundle();
 			result.putInt(STATUS_CODE_KEY, statusCode);
-			result.putString(RESPONSE_KEY, EntityUtils.toString(responseEntity));
+			String responseEntityS = EntityUtils.toString(responseEntity);
+			result.putString(RESPONSE_KEY, responseEntityS);
 			Log.d(LOG, "result code : " + String.valueOf(statusCode));
-			Log.d(LOG, "result string : " + EntityUtils.toString(responseEntity));
+			Log.d(LOG, "result string : " + responseEntityS);
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
