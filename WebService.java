@@ -24,7 +24,7 @@ public class WebService {
 	private Uri mUri;
 	private Intent mIntent;
 	
-	public WebService(Context context, ResultReceiver receiver) {
+	public WebService(Context context) {
 		super();
 		mContext = context;
 		mReceiver = receiver;
