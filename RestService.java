@@ -34,7 +34,6 @@ public class RestService extends IntentService{
 
 	@Override
 	protected void onHandleIntent(Intent intent) {
-		for(int i=0; i<1000000; i++){}
 		Uri uri = intent.getData();
 		Bundle bundle = intent.getExtras();
 		int method = bundle.getInt(WebService.METHOD_KEY);
