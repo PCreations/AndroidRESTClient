@@ -34,7 +34,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
         mReceiver.setReceiver(this);
 	}
 	
-	abstract protected void setProcessor();
+	protected abstract void setProcessor();
 	
 	public void get(String uri) {
 		initService(GET, uri);
@@ -63,8 +63,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
-		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
-		
+		//Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
 	}
 	
 	

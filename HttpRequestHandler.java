@@ -65,7 +65,7 @@ public class HttpRequestHandler {
 			result = new Bundle();
 			result.putInt(STATUS_CODE_KEY, statusCode);
 			String responseEntityS = EntityUtils.toString(responseEntity);
-			result.putString(RESPONSE_KEY, responseEntityS);
+			result.putString(WebService.RESULT_KEY, responseEntityS);
 			Log.d(LOG, "result code : " + String.valueOf(statusCode));
 			Log.d(LOG, "result string : " + responseEntityS);
 		} catch (ClientProtocolException e) {

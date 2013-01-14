@@ -26,7 +26,7 @@ public class RestService extends IntentService{
 		ResultReceiver receiver = bundle.getParcelable(WebService.RECEIVER_KEY);
         HttpRequestHandler http = new HttpRequestHandler();
         Bundle requestResult = null;
-        switch (method) {
+        switch(method) {
             case WebService.GET:
                 requestResult = http.get(uri.toString());
             break;
