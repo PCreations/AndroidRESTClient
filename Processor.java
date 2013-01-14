@@ -16,7 +16,7 @@ public class Processor {
 		mContext = context;
 	}
 
-	public void parse(Bundle resultData) {
+	public void execute(Bundle resultData) {
 		// TODO Auto-generated method stub
 		InputStream result = new ByteArrayInputStream(resultData.getString(WebService.RESULT_KEY).getBytes());
 		mParser = new CountryParser(mContext);

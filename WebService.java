@@ -1,17 +1,13 @@
 package com.pcreations.restclient;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import fr.chupee.jsonparser.parser.CountryParser;
 
-public class WebService implements RestResultReceiver.Receiver{
+public abstract class WebService implements RestResultReceiver.Receiver{
 
 	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
@@ -22,33 +18,37 @@ public class WebService implements RestResultReceiver.Receiver{
 	public final static int PUT = 2;
 	public final static int DELETE = 3;
 	
-	private RestResultReceiver mReceiver;
-	private Context mContext;
-	private Uri mUri;
-	private Intent mIntent;
-	private CountryParser mParser;
+	protected RestResultReceiver mReceiver;
+	protected Context mContext;
+	protected Uri mUri;
+	protected Intent mIntent;
+	protected Processor mProcessor;
 	
 	public WebService(Context context) {
 		super();
 		mContext = context;
+		setProcessor();
+		RestService.setProcessor(mProcessor);
 		mIntent = new Intent(mContext, RestService.class);
 		mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
 	}
+	
+	abstract protected void setProcessor();
 	
 	public void get(String uri) {
 		initService(GET, uri);
 		startService();
 	}
 	
-	private void initService(int method, String uri) {
+	protected void initService(int method, String uri) {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
 		mIntent.putExtra(METHOD_KEY, method);
 		mIntent.putExtra(RECEIVER_KEY, mReceiver);
 	}
 	
-	private void startService() {
+	protected void startService() {
 		mContext.startService(mIntent);
 	}
 	
