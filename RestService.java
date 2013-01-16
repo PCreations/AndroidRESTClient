@@ -35,7 +35,7 @@ public class RestService extends IntentService{
             break;
         }
         Bundle resultData = new Bundle();
-        resultData.putString(HttpRequestHandler.RESPONSE_KEY, requestResult.getString(HttpRequestHandler.RESPONSE_KEY));
+        resultData.putString(WebService.RESULT_KEY, requestResult.getString(WebService.RESULT_KEY));
         try {
 			executeProcessor(resultData);
 		} catch (ProcessorNotInitializedException e) {

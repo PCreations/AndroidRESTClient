@@ -49,6 +49,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	protected void startService() {
+		Log.d("tag", "startService");
 		mContext.startService(mIntent);
 	}
 	
@@ -63,7 +64,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
-		//Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
+		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
 	}
 	
 	

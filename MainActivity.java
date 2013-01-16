@@ -14,7 +14,7 @@ public class MainActivity extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         CountryWebService ws = new CountryWebService(this);
-        ws.get("http://chupee.fr/json/countries.json");
+        ws.get("http://pcreations.fr/labs/facteo/distribution_centers/get/1.json");
     }
     
 }
