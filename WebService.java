@@ -71,11 +71,11 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
-		onFinishedRequestListener.onFinishedRequest(resultData);
+		onFinishedRequestListener.onFinishedRequest(resultCode, resultData);
 	}
 	
 	public interface OnFinishedRequestListener {
-        public abstract void onFinishedRequest(Bundle resultData);
+        public abstract void onFinishedRequest(int resultCode, Bundle resultData);
    }
 	
 	
