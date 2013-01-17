@@ -1,5 +1,7 @@
 package com.pcreations.restclient;
 
+import java.util.UUID;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,14 +13,15 @@ import com.pcreations.restclient.WebService.OnFinishedRequestListener;
 
 public class MainActivity extends Activity  {
 
-	CountryWebService ws;
+	private CountryWebService ws;
+	private UUID chupeeRequestID;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ws = new CountryWebService(this);
-        ws.getChupee();
+        chupeeRequestID = ws.getChupee();
     }
     
     public void onResume() {
@@ -29,11 +32,7 @@ public class MainActivity extends Activity  {
 			@Override
 			public void onFinishedRequest(int resultCode, Bundle bundle) {
 				// TODO Auto-generated method stub
-				Log.d(RestService.TAG, "onFinishedRequest result code = " + String.valueOf(resultCode));
-				Intent originalIntent = bundle.getParcelable(RestService.INTENT_KEY);
-				Log.d(RestService.TAG, "onFinishedRequest original intent uri = " + originalIntent.getData());
-				Bundle bundle2 = originalIntent.getExtras();
-				Log.d(RestService.TAG, "onFinishedRequest original intent methode = " + bundle2.getInt(RestService.METHOD_KEY));
+				handleFinishedRequest(resultCode, bundle);
 			}
     		
     	});
@@ -43,6 +42,15 @@ public class MainActivity extends Activity  {
     	super.onPause();
     	
     	ws.setOnFinishedRequestListener(null);
+    }
+    
+    private void handleFinishedRequest(int resultCode, Bundle bundle) {
+    	Log.d(RestService.TAG, "onFinishedRequest result code = " + String.valueOf(resultCode));
+		Intent originalIntent = bundle.getParcelable(RestService.INTENT_KEY);
+		Log.d(RestService.TAG, "onFinishedRequest original intent uri = " + originalIntent.getData());
+		Bundle bundle2 = originalIntent.getExtras();
+		Log.d(RestService.TAG, "onFinishedRequest original intent methode = " + bundle2.getInt(RestService.METHOD_KEY));
+		Log.d(RestService.TAG, "onFinishedRequest original intent requestID = " + bundle2.getSerializable(RestService.REQUEST_ID));
     }
     
 }

@@ -79,7 +79,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		onFinishedRequestListener.onFinishedRequest(resultCode, resultData);
-		//TODO close service
+		mContext.stopService(mIntent);
 	}
 	
 	public interface OnFinishedRequestListener {
