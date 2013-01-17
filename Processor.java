@@ -7,8 +7,6 @@ import android.util.Log;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
-enum RequestState { STATE_POSTING, STATE_UPDATING, STATE_DELETING, STATE_RETRIEVING, STATE_OK }
-
 public abstract class Processor {
 
 	protected HttpRequestHandler mHttpRequestHandler;
