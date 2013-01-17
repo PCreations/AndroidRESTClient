@@ -11,15 +11,13 @@ enum RequestState { STATE_POSTING, STATE_UPDATING, STATE_DELETING, STATE_RETRIEV
 
 public abstract class Processor {
 
-	protected Context mContext;
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
 	protected ResourceRepresentation mCurrentResource;
 	protected ResourcesManager mResourcesManager;
 	
 	
-	public Processor(Context context) {
-		mContext = context;
+	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
 	}
 
