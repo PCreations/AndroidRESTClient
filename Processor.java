@@ -7,15 +7,15 @@ import android.util.Log;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
-enum RequestState { STATE_POSTING, STATE_UPDATING, STATE_DELETING, STATE_OK }
+enum RequestState { STATE_POSTING, STATE_UPDATING, STATE_DELETING, STATE_RETRIEVING, STATE_OK }
 
 public abstract class Processor {
 
 	protected Context mContext;
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
-	//protected ResourceRepresentation currentResource;
-	//protected ResourcesManager mResourcesManager;
+	protected ResourceRepresentation mCurrentResource;
+	protected ResourcesManager mResourcesManager;
 	
 	
 	public Processor(Context context) {
@@ -23,10 +23,12 @@ public abstract class Processor {
 		mHttpRequestHandler = new HttpRequestHandler();
 	}
 
+	abstract public void setResourcesManager();
+	
 	public void get(String url, int method) {
 		//GESTION BDD
-		//mCurrentResource.setState(STATE_RETRIEVING)
-		//mResourcesManager.getDAO(mCurrentResource).save(mCurrentResource);
+		mCurrentResource.setState(RequestState.STATE_RETRIEVING);
+		mResourcesManager.getResourceDao(mCurrentResource).save(mCurrentResource);
 		processRequest(url, method);
 	}
 	
@@ -45,7 +47,6 @@ public abstract class Processor {
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
-		Log.d(RestService.TAG, "Dans handleHttpRequestHandlerCallback");
 		mRESTServiceCallback.callAction(statusCode);
 	}
 	
