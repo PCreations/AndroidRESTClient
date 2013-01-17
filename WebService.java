@@ -13,6 +13,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
 	public final static String RECEIVER_KEY = "com.pcreations.restclient.webservice.RECEIVER_KEY";
 	public final static String RESULT_KEY = "com.pcreations.restclient.webservice.RESULT_KEY";
+	public final static String RESSOURCE_KEY = "com.pcreations.restclient.webservice.RESSOURCE_KEY";
 	public final static int GET = 0;
 	public final static int POST = 1;
 	public final static int PUT = 2;
@@ -23,6 +24,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected Uri mUri;
 	protected Intent mIntent;
 	protected Processor mProcessor;
+	protected OnFinishedRequestListener onFinishedRequestListener;
 	
 	public WebService(Context context) {
 		super();
@@ -61,11 +63,20 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		this.mUri = mUri;
 	}
 
+
+	public void setOnFinishedRequestListener(OnFinishedRequestListener listener) {
+		onFinishedRequestListener = listener;
+	}
+
+	
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
-		Log.d("WEBSERVICE : resultCode = ", String.valueOf(resultCode));
-		Log.d("WEBSERVICE : resultData = ", resultData.getString(RESULT_KEY));
+		onFinishedRequestListener.onFinishedRequest(resultData);
 	}
+	
+	public interface OnFinishedRequestListener {
+        public abstract void onFinishedRequest(Bundle resultData);
+   }
 	
 	
 	
