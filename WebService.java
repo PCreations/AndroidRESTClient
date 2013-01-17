@@ -9,11 +9,6 @@ import android.util.Log;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public final static String METHOD_KEY = "com.pcreations.restclient.webservice.METHOD_KEY";
-	public final static String PARAMS_KEY = "com.pcreations.restclient.webservice.PARAMS_KEY";
-	public final static String RECEIVER_KEY = "com.pcreations.restclient.webservice.RECEIVER_KEY";
-	public final static String RESULT_KEY = "com.pcreations.restclient.webservice.RESULT_KEY";
-	public final static String RESSOURCE_KEY = "com.pcreations.restclient.webservice.RESSOURCE_KEY";
 	public final static int GET = 0;
 	public final static int POST = 1;
 	public final static int PUT = 2;
@@ -46,12 +41,15 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected void initService(int method, String uri) {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
-		mIntent.putExtra(METHOD_KEY, method);
-		mIntent.putExtra(RECEIVER_KEY, mReceiver);
+		mIntent.putExtra(RestService.METHOD_KEY, method);
+		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
+		//TODO requestID
 	}
 	
+	abstract protected void initService(int method, String uri, Bundle extraParams);
+	
 	protected void startService() {
-		Log.d("tag", "startService");
+		Log.d(RestService.TAG, "startService");
 		mContext.startService(mIntent);
 	}
 	
@@ -72,11 +70,12 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		onFinishedRequestListener.onFinishedRequest(resultCode, resultData);
+		//TODO close service
 	}
 	
 	public interface OnFinishedRequestListener {
-        public abstract void onFinishedRequest(int resultCode, Bundle resultData);
-   }
+        public abstract void onFinishedRequest(int resultCode, Bundle bundle);
+    }
 	
 	
 	

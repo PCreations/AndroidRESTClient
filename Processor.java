@@ -3,10 +3,11 @@ package com.pcreations.restclient;
 import java.io.InputStream;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
-public abstract class Processor implements RestResultReceiver.Receiver {
+public abstract class Processor {
 
 	protected Context mContext;
 	protected HttpRequestHandler mHttpRequestHandler;
@@ -24,7 +25,6 @@ public abstract class Processor implements RestResultReceiver.Receiver {
 	}
 	
 	private void processRequest(String url, int method) {
-		mHttpRequestHandler.get(url);
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
@@ -34,15 +34,17 @@ public abstract class Processor implements RestResultReceiver.Receiver {
 			}
 			
 		});
+		mHttpRequestHandler.get(url);
 	}
 	
 	private void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
-		mRESTServiceCallback.callAction();
+		Log.d(RestService.TAG, "Dans handleHttpRequestHandlerCallback");
+		mRESTServiceCallback.callAction(statusCode);
 	}
 	
 	public interface RESTServiceCallback {
-		abstract public void callAction();
+		abstract public void callAction(int statusCode);
 	}
 	
 	public void setRESTServiceCallback(RESTServiceCallback callback) {

@@ -1,6 +1,7 @@
 package com.pcreations.restclient;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -17,15 +18,7 @@ public class MainActivity extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ws = new CountryWebService(this);
-        ws.getAddress(2);
-        /*
-         * request = ws.getDistribCenter(1);
-         * ws.setOnFinishedRequestListener(new OnFinishedRequestListener(
-         * 	public void onFinishedRequest(Addresses a...) {
-         *    //gérer affichage liste
-         * }
-         * )
-         */
+        ws.getChupee();
     }
     
     public void onResume() {
@@ -34,8 +27,13 @@ public class MainActivity extends Activity  {
     	ws.setOnFinishedRequestListener(new OnFinishedRequestListener() {
 
 			@Override
-			public void onFinishedRequest(Bundle resultData) {
-				Log.d("onFinishedRequest : resultData = ", resultData.getString(WebService.RESULT_KEY));
+			public void onFinishedRequest(int resultCode, Bundle bundle) {
+				// TODO Auto-generated method stub
+				Log.d(RestService.TAG, "onFinishedRequest result code = " + String.valueOf(resultCode));
+				Intent originalIntent = bundle.getParcelable(RestService.INTENT_KEY);
+				Log.d(RestService.TAG, "onFinishedRequest original intent uri = " + originalIntent.getData());
+				Bundle bundle2 = originalIntent.getExtras();
+				Log.d(RestService.TAG, "onFinishedRequest original intent methode = " + bundle2.getInt(RestService.METHOD_KEY));
 			}
     		
     	});
