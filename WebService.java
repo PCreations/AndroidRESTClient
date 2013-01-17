@@ -1,5 +1,7 @@
 package com.pcreations.restclient;
 
+import java.util.UUID;
+
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -33,24 +35,31 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	
 	protected abstract void setProcessor();
 	
-	public void get(String uri) {
-		initService(GET, uri);
+	public UUID get(String uri) {
+		UUID requestID = generateID();
+		initService(requestID, GET, uri);
 		startService();
+		return requestID;
 	}
 	
-	protected void initService(int method, String uri) {
+	protected void initService(UUID requestID, int method, String uri) {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
+		mIntent.putExtra(RestService.REQUEST_ID, requestID);
 		mIntent.putExtra(RestService.METHOD_KEY, method);
 		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
 		//TODO requestID
 	}
 	
-	abstract protected void initService(int method, String uri, Bundle extraParams);
+	abstract protected void initService(UUID requestID, int method, String uri, Bundle extraParams);
 	
 	protected void startService() {
 		Log.d(RestService.TAG, "startService");
 		mContext.startService(mIntent);
+	}
+	
+	protected UUID generateID() {
+		return UUID.randomUUID();
 	}
 	
 	public Uri getUri() {

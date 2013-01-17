@@ -24,7 +24,7 @@ public abstract class Processor {
 		processRequest(url, method);
 	}
 	
-	private void processRequest(String url, int method) {
+	protected void processRequest(String url, int method) {
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
@@ -37,7 +37,7 @@ public abstract class Processor {
 		mHttpRequestHandler.get(url);
 	}
 	
-	private void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
+	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
 		Log.d(RestService.TAG, "Dans handleHttpRequestHandlerCallback");
 		mRESTServiceCallback.callAction(statusCode);
