@@ -2,9 +2,6 @@ package com.pcreations.restclient;
 
 import java.io.InputStream;
 
-import android.content.Context;
-import android.util.Log;
-
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
 public abstract class Processor {
@@ -14,7 +11,6 @@ public abstract class Processor {
 	protected ResourceRepresentation mCurrentResource;
 	protected ResourcesManager mResourcesManager;
 	
-	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
 	}
@@ -23,8 +19,9 @@ public abstract class Processor {
 	
 	public void get(String url, int method) {
 		//GESTION BDD
-		mCurrentResource.setState(RequestState.STATE_RETRIEVING);
-		mResourcesManager.getResourceDao(mCurrentResource).save(mCurrentResource);
+		//mCurrentResource.setName(mCurrentResource);
+		//mCurrentResource.setState(RequestState.STATE_RETRIEVING);
+		//mResourcesManager.createOrupdate(mCurrentResource);
 		processRequest(url, method);
 	}
 	
