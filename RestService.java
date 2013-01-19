@@ -11,7 +11,7 @@ import com.pcreations.restclient.Processor.RESTServiceCallback;
 
 public class RestService extends IntentService{
 	
-	public final static String REQUEST_ID = "com.pcreations.restclient.restservice.REQUEST_ID";
+	public final static String REQUEST_KEY = "com.pcreations.restclient.restservice.REQUEST_KEY";
 	public final static String METHOD_KEY = "com.pcreations.restclient.restservice.METHOD_KEY";
 	public final static String PARAMS_KEY = "com.pcreations.restclient.restservice.PARAMS_KEY";
 	public final static String RECEIVER_KEY = "com.pcreations.restclient.restservice.RECEIVER_KEY";

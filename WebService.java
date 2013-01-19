@@ -43,18 +43,18 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	
 	protected RESTRequest get(String uri) {
 		UUID requestID = generateID();
-		initService(requestID, GET, uri);
 		Log.d(RestService.TAG, "WebService.get()");
 		startService();
 		RESTRequest r = createNewRequest(requestID, uri);
+		initService(r);
 		return r;
 	}
 	
 	protected RESTRequest get(String uri, Bundle extraParams) {
 		UUID requestID = generateID();
-		initService(requestID, GET, uri, extraParams);
 		Log.d(RestService.TAG, "WebService.get()");
 		RESTRequest r = createNewRequest(requestID, uri, extraParams);
+		initService(r);
 		return r;
 	}
 	
@@ -70,10 +70,9 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		return r;
 	}
 	
-	protected void initService(UUID requestID, int method, String uri) {
-		setData(uri);
-		mIntent.putExtra(RestService.REQUEST_ID, requestID);
-		mIntent.putExtra(RestService.METHOD_KEY, method);
+	protected void initService(RESTRequest request) {
+		setData(request.getUrl());
+		mIntent.putExtra(RestService.REQUEST_KEY, request);
 		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
 		//TODO requestID
 	}
@@ -82,8 +81,6 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
 	}
-	
-	abstract protected void initService(UUID requestID, int method, String uri, Bundle extraParams);
 	
 	protected void startService() {
 		Log.d(RestService.TAG, "startService");
@@ -110,12 +107,10 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d(RestService.TAG, "onReceiveResult");
-		Intent i = resultData.getParcelable(RestService.INTENT_KEY);
-		Bundle extras = i.getExtras();
-		UUID requestID = (UUID) extras.getSerializable(RestService.REQUEST_ID);
+		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
 		for(RESTRequest request : mRequestCollection) {
-			if(request.getID().equals(requestID)) {
-				request.getListener().onFinishedRequest(resultCode, resultData);
+			if(request.getID().equals(r.getID())) {
+				request.getListener().onFinishedRequest(resultCode);
 			}
 		}
 		mContext.stopService(mIntent);

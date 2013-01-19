@@ -51,5 +51,15 @@ public class RESTRequest implements Serializable {
 	public interface OnFinishedRequestListener {
         public abstract void onFinishedRequest(int resultCode, Bundle bundle);
     }
+
+	public String getUrl() {
+		return mUrl;
+	}
+
+	public void setUrl(String url) {
+		this.mUrl = url;
+	}
+	
+	
 	
 }
