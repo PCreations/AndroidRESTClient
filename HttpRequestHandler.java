@@ -2,8 +2,11 @@ package com.pcreations.restclient;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.UnknownHostException;
+import java.net.UnknownServiceException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -21,6 +24,13 @@ public class HttpRequestHandler {
 
 	public static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequestHandler.STATUS_CODE";
 	public static final String RESPONSE_KEY = "com.pcreations.restclient.HttpRequestHandler.RESPONSE";
+	private static final int URI_SYNTAX_EXCEPTION = 1;
+	private static final int CLIENT_PROTOCOL_EXCEPTION = 2;
+	private static final int IO_EXCEPTION = 3;
+	private static final int UNKNOWN_HOST_EXCEPTION = 4;
+	private static final int MALFORMED_URL_EXCEPTION = 5;
+	private static final int UNKNOWN_SERVICE_EXCEPTION = 6;
+	
 	private HttpClient mHttpClient;
 	private HttpRequestBase mRequest;
 	private ProcessorCallback mProcessorCallback;
@@ -34,11 +44,12 @@ public class HttpRequestHandler {
 		Log.d("tag", "Executing GET request: " + url);
 		try {
 			mRequest.setURI(new URI(url));
+			processRequest();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, null);
 		}
-		processRequest();
 	}
 	
 	public void post(String url) {
@@ -46,11 +57,12 @@ public class HttpRequestHandler {
 		mRequest.setHeader("Content-Type", "application/json");
 		try {
 			mRequest.setURI(new URI(url));
+			processRequest();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, null);
 		}
-		processRequest();
 	}
 	
 	private void processRequest() {
@@ -65,9 +77,18 @@ public class HttpRequestHandler {
 			IS = responseEntity.getContent();
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
+			statusCode = CLIENT_PROTOCOL_EXCEPTION;
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
+			if(e instanceof UnknownHostException)
+				statusCode = UNKNOWN_HOST_EXCEPTION;
+			else if(e instanceof MalformedURLException)
+				statusCode = MALFORMED_URL_EXCEPTION;
+			else if(e instanceof UnknownServiceException)
+				statusCode = UNKNOWN_SERVICE_EXCEPTION;
+			else
+				statusCode = IO_EXCEPTION;
 			e.printStackTrace();
 		}
 		mProcessorCallback.callAction(statusCode, IS);
