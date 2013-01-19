@@ -1,6 +1,7 @@
 package com.pcreations.restclient;
 
 public interface ResourceRepresentation {
+	
 	abstract public String getName();
 	abstract public RequestState getState();
 	abstract public int getResultCode();

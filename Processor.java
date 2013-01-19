@@ -1,6 +1,7 @@
 package com.pcreations.restclient;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
@@ -8,21 +9,39 @@ public abstract class Processor {
 
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
-	protected ResourceRepresentation mCurrentResource;
-	protected ResourcesManager mResourcesManager;
+	protected ResourceDaoGetter<ResourceRepresentation> mResourceDaoGetter; //could be a DatabaseHelper;
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
+		setResourceDaoGetter();
 	}
 
-	abstract public void setResourcesManager();
+	abstract public void setResourceDaoGetter();
 	
 	protected void preRequestProcess(RESTRequest r) {
 		//GESTION BDD
-		//mCurrentResource.setName(mCurrentResource);
-		//mCurrentResource.setState(RequestState.STATE_RETRIEVING);
-		//mResourcesManager.createOrupdate(mCurrentResource);
-		processRequest(r);
+		ResourceRepresentation resource = r.getResourceRepresentation();
+		switch(r.getVerb()) {
+			case GET:
+				resource.setState(RequestState.STATE_RETRIEVING);
+				break;
+			case POST:
+				resource.setState(RequestState.STATE_POSTING);
+				break;
+			case PUT:
+				resource.setState(RequestState.STATE_UPDATING);
+				break;
+			case DELETE:
+				resource.setState(RequestState.STATE_DELETING);
+				break;
+		}
+		try {
+			mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+			processRequest(r);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	protected void processRequest(RESTRequest r) {
@@ -49,12 +68,12 @@ public abstract class Processor {
 		mRESTServiceCallback.callAction(statusCode);
 	}
 	
-	public interface RESTServiceCallback {
-		abstract public void callAction(int statusCode);
-	}
-	
 	public void setRESTServiceCallback(RESTServiceCallback callback) {
 		mRESTServiceCallback = callback;
+	}
+	
+	public interface RESTServiceCallback {
+		abstract public void callAction(int statusCode);
 	}
 	
 }

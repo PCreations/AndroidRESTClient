@@ -12,14 +12,17 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
+import com.pcreations.restclient.exceptions.CurrentResourceNotInitializedException;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
+	private static final boolean FLAG_RESOURCE = true;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;
 	protected OnFinishedRequestListener onFinishedRequestListener;
 	protected List<RESTRequest> mRequestCollection;
+	protected ResourceRepresentation mCurrentResource;
 	
 	public WebService(Context context) {
 		super();
@@ -37,7 +40,12 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		UUID requestID = generateID();
 		Log.d(RestService.TAG, "WebService.get()");
 		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri);
-		initAndStartService(r);
+		try {
+			initAndStartService(r);
+		} catch (CurrentResourceNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return r;
 	}
 	
@@ -45,7 +53,12 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		UUID requestID = generateID();
 		Log.d(RestService.TAG, "WebService.get()");
 		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri, extraParams);
-		initAndStartService(r);
+		try {
+			initAndStartService(r);
+		} catch (CurrentResourceNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return r;
 	}
 	
@@ -61,13 +74,22 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		return r;
 	}
 	
-	protected void initAndStartService(RESTRequest request) {
+	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
+		if(FLAG_RESOURCE) {
+			if(null == mCurrentResource)
+				throw new CurrentResourceNotInitializedException();
+			request.setResourceRepresentation(mCurrentResource);
+		}
 		Intent i = new Intent(mContext, RestService.class);
 		i.setData(Uri.parse(request.getUrl()));
 		i.putExtra(RestService.REQUEST_KEY, request);
 		i.putExtra(RestService.RECEIVER_KEY, mReceiver);
 		Log.d(RestService.TAG, "startService");
 		mContext.startService(i);
+	}
+	
+	protected void setCurrentResource(ResourceRepresentation resource) {
+		mCurrentResource = resource;
 	}
 	
 	protected UUID generateID() {
