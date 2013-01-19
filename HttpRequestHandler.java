@@ -3,6 +3,7 @@ package com.pcreations.restclient;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
@@ -18,7 +19,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 import android.util.Log;
 
@@ -34,13 +39,21 @@ public class HttpRequestHandler {
 	private static final int UNKNOWN_HOST_EXCEPTION = 4;
 	private static final int MALFORMED_URL_EXCEPTION = 5;
 	private static final int UNKNOWN_SERVICE_EXCEPTION = 6;
+	private static final int CONNECT_TIMEOUT_EXCEPTION = 7;
+	private static final int SOCKET_TIMEOUT_EXCEPTION = 8;
+	private static final int TIMEOUT_CONNECTION = 10000;
+	private static final int TIMEOUT_SOCKET = 10000;
 	
 	private HttpClient mHttpClient;
 	private HttpRequestBase mRequest;
+	private HttpParams mHttpParams;
 	private ProcessorCallback mProcessorCallback;
 	
 	public HttpRequestHandler() {
-		mHttpClient = new DefaultHttpClient();
+		mHttpParams = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(mHttpParams, TIMEOUT_CONNECTION);
+		HttpConnectionParams.setSoTimeout(mHttpParams, TIMEOUT_SOCKET);
+		mHttpClient = new DefaultHttpClient(mHttpParams);
 	}
 	
 	public void get(RESTRequest r) {
@@ -84,12 +97,10 @@ public class HttpRequestHandler {
 		InputStream IS = null;
 		try {
 			response = mHttpClient.execute(mRequest);
-			Log.d(RestService.TAG, "after HttpClient.exectue()");
 			HttpEntity responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
 			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 			IS = responseEntity.getContent();
-			Log.d(RestService.TAG, "après responseEntity.getContent()");
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			statusCode = CLIENT_PROTOCOL_EXCEPTION;
@@ -103,12 +114,15 @@ public class HttpRequestHandler {
 				statusCode = MALFORMED_URL_EXCEPTION;
 			else if(e instanceof UnknownServiceException)
 				statusCode = UNKNOWN_SERVICE_EXCEPTION;
+			else if(e instanceof ConnectTimeoutException)
+				statusCode = CONNECT_TIMEOUT_EXCEPTION;
+			else if(e instanceof SocketTimeoutException)
+				statusCode = SOCKET_TIMEOUT_EXCEPTION;
 			else
 				statusCode = IO_EXCEPTION;
 			Log.e(RestService.TAG, "IO_EXCEPTION");
 			e.printStackTrace();
 		}
-		Log.d(RestService.TAG, "avant processorCallback.callAction()");
 		mProcessorCallback.callAction(statusCode, IS);
 	}
 	

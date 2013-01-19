@@ -9,9 +9,8 @@ import com.pcreations.restclient.DaoAccess;
 
 public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implements DaoAccess<TestResource>{
 
-	protected TestResourceDao(ConnectionSource connectionSource,
-			Class<TestResource> dataClass) throws SQLException {
-		super(connectionSource, dataClass);
+	public TestResourceDao(ConnectionSource connectionSource) throws SQLException {
+		super(connectionSource, TestResource.class);
 		// TODO Auto-generated constructor stub
 	}
 	

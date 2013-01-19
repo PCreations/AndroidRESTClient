@@ -5,7 +5,9 @@ import java.sql.SQLException;
 
 import android.util.Log;
 
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
+import com.pcreations.restclient.test.TestResource;
 
 public abstract class Processor {
 
@@ -40,6 +42,8 @@ public abstract class Processor {
 			}
 			try {
 				mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+				TestResource t = mResourceDaoGetter.getResourceDao().findByName("test");
+				Log.d(RestService.TAG, t.toString());
 				processRequest(r);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block

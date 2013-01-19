@@ -9,6 +9,11 @@ import com.pcreations.restclient.ResourceRepresentation;
 @DatabaseTable(tableName = "resources", daoClass=TestResourceDao.class)
 public class TestResource implements ResourceRepresentation {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 3031641666317099499L;
+
 	public static final String NAME_COLUMN = "name";
 
 	@DatabaseField(generatedId=true)
@@ -17,8 +22,8 @@ public class TestResource implements ResourceRepresentation {
 	@DatabaseField(columnName=NAME_COLUMN)
 	private String mName;
 	
-	@DatabaseField(dataType=DataType.INTEGER)
-	private RequestState mState;
+	@DatabaseField
+	private int mState;
 	
 	@DatabaseField
 	private int mResultCode;
@@ -32,7 +37,7 @@ public class TestResource implements ResourceRepresentation {
 		this.mName = mName;
 	}
 	
-	public TestResource(int id, String mName, RequestState mState,
+	public TestResource(int id, String mName, int mState,
 			int mResultCode) {
 		super();
 		this.id = id;
@@ -47,7 +52,7 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	@Override
-	public RequestState getState() {
+	public int getState() {
 		return mState;
 	}
 
@@ -62,7 +67,7 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	@Override
-	public void setState(RequestState state) {
+	public void setState(int state) {
 		mState = state;
 	}
 
@@ -71,4 +76,7 @@ public class TestResource implements ResourceRepresentation {
 		mResultCode = resultCode;
 	}
 
+	public String toString() {
+		return "name[" + mName + "], mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]";
+	}
 }
