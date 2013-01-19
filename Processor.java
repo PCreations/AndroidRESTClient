@@ -8,8 +8,6 @@ public abstract class Processor {
 
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
-	protected ResourceRepresentation mCurrentResource;
-	protected ResourcesManager mResourcesManager;
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
