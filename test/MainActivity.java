@@ -1,4 +1,4 @@
-package com.pcreations.restclient;
+package com.pcreations.restclient.test;
 
 import java.util.UUID;
 
@@ -7,28 +7,29 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
-import com.pcreations.country_web_service.CountryWebService;
 import com.pcreations.rest.R;
+import com.pcreations.restclient.RESTRequest;
 import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
+import com.pcreations.restclient.RestService;
 
 public class MainActivity extends Activity  {
 
-	private CountryWebService ws;
-	private RESTRequest chupeeRequest;
+	private TestWebService ws;
+	private RESTRequest testRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ws = new CountryWebService(this);
-        chupeeRequest = ws.getChupee();
-        Log.e(RestService.TAG, "chupeeRequestID = " + chupeeRequest.toString());
+        ws = new TestWebService(this);
+        testRequest = ws.test();
+        Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
     }
     
     public void onResume() {
     	super.onResume();
     	
-    	chupeeRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
+    	testRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
 
 			@Override
 			public void onFinishedRequest(int resultCode, Bundle bundle) {
@@ -46,7 +47,7 @@ public class MainActivity extends Activity  {
     
     public void onPause() {
     	super.onPause();
-    	chupeeRequest.setOnFinishedRequestListener(null);
+    	testRequest.setOnFinishedRequestListener(null);
     }
     
 }

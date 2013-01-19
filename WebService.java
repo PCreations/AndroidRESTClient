@@ -46,7 +46,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		initService(requestID, GET, uri);
 		Log.d(RestService.TAG, "WebService.get()");
 		startService();
-		RESTRequest r = createNewRequest(requestID);
+		RESTRequest r = createNewRequest(requestID, uri);
 		return r;
 	}
 	
@@ -54,12 +54,18 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		UUID requestID = generateID();
 		initService(requestID, GET, uri, extraParams);
 		Log.d(RestService.TAG, "WebService.get()");
-		RESTRequest r = createNewRequest(requestID);
+		RESTRequest r = createNewRequest(requestID, uri, extraParams);
 		return r;
 	}
 	
-	protected RESTRequest createNewRequest(UUID requestID) {
-		RESTRequest r = new RESTRequest(requestID);
+	protected RESTRequest createNewRequest(UUID requestID, String uri) {
+		RESTRequest r = new RESTRequest(requestID, uri);
+		mRequestCollection.add(r);
+		return r;
+	}
+	
+	protected RESTRequest createNewRequest(UUID requestID, String uri, Bundle extraParams) {
+		RESTRequest r = new RESTRequest(requestID, uri, extraParams);
 		mRequestCollection.add(r);
 		return r;
 	}
