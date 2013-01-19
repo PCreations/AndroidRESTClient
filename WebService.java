@@ -16,7 +16,7 @@ import com.pcreations.restclient.exceptions.CurrentResourceNotInitializedExcepti
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	private static final boolean FLAG_RESOURCE = true;
+	public static final boolean FLAG_RESOURCE = false;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;

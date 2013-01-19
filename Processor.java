@@ -3,6 +3,8 @@ package com.pcreations.restclient;
 import java.io.InputStream;
 import java.sql.SQLException;
 
+import android.util.Log;
+
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 
 public abstract class Processor {
@@ -20,28 +22,32 @@ public abstract class Processor {
 	
 	protected void preRequestProcess(RESTRequest r) {
 		//GESTION BDD
-		ResourceRepresentation resource = r.getResourceRepresentation();
-		switch(r.getVerb()) {
-			case GET:
-				resource.setState(RequestState.STATE_RETRIEVING);
-				break;
-			case POST:
-				resource.setState(RequestState.STATE_POSTING);
-				break;
-			case PUT:
-				resource.setState(RequestState.STATE_UPDATING);
-				break;
-			case DELETE:
-				resource.setState(RequestState.STATE_DELETING);
-				break;
+		if(WebService.FLAG_RESOURCE) {
+			ResourceRepresentation resource = r.getResourceRepresentation();
+			switch(r.getVerb()) {
+				case GET:
+					resource.setState(RequestState.STATE_RETRIEVING);
+					break;
+				case POST:
+					resource.setState(RequestState.STATE_POSTING);
+					break;
+				case PUT:
+					resource.setState(RequestState.STATE_UPDATING);
+					break;
+				case DELETE:
+					resource.setState(RequestState.STATE_DELETING);
+					break;
+			}
+			try {
+				mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+				processRequest(r);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
-		try {
-			mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+		else
 			processRequest(r);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 	
 	protected void processRequest(RESTRequest r) {
@@ -65,6 +71,7 @@ public abstract class Processor {
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
+		Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
 		mRESTServiceCallback.callAction(statusCode);
 	}
 	

@@ -84,13 +84,16 @@ public class HttpRequestHandler {
 		InputStream IS = null;
 		try {
 			response = mHttpClient.execute(mRequest);
+			Log.d(RestService.TAG, "after HttpClient.exectue()");
 			HttpEntity responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
 			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 			IS = responseEntity.getContent();
+			Log.d(RestService.TAG, "après responseEntity.getContent()");
 		} catch (ClientProtocolException e) {
 			// TODO Auto-generated catch block
 			statusCode = CLIENT_PROTOCOL_EXCEPTION;
+			Log.e(RestService.TAG, "CLIENT_PROTOCOL_EXCEPTION");
 			e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -102,8 +105,10 @@ public class HttpRequestHandler {
 				statusCode = UNKNOWN_SERVICE_EXCEPTION;
 			else
 				statusCode = IO_EXCEPTION;
+			Log.e(RestService.TAG, "IO_EXCEPTION");
 			e.printStackTrace();
 		}
+		Log.d(RestService.TAG, "avant processorCallback.callAction()");
 		mProcessorCallback.callAction(statusCode, IS);
 	}
 	
