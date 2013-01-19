@@ -12,6 +12,7 @@ public class RestService extends IntentService{
 	
 	public final static String REQUEST_KEY = "com.pcreations.restclient.restservice.REQUEST_KEY";
 	public final static String RECEIVER_KEY = "com.pcreations.restclient.restservice.RECEIVER_KEY";
+	public final static String INTENT_KEY = "com.pcreations.restclient.restservice.INTENT_KEY";
 	public final static String TAG = "com.pcreations.restclient.restservice";
 	private static Processor processor = null;
 	private Intent mIntent;
@@ -44,6 +45,7 @@ public class RestService extends IntentService{
 		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
 		Bundle resultData = new Bundle();
         resultData.putSerializable(RestService.REQUEST_KEY, r);
+        resultData.putParcelable(RestService.INTENT_KEY, mIntent);
         receiver.send(statusCode, resultData);
 	}
 	

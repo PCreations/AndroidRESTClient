@@ -1,8 +1,11 @@
 package com.pcreations.restclient;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+
+import org.apache.http.message.BasicHeader;
 
 import android.os.Bundle;
 
@@ -19,13 +22,14 @@ public class RESTRequest implements Serializable {
 	private HTTPVerb mVerb;
 	private String mUrl;
 	private Bundle mExtraParams;
-	private List mHeaders;
+	private List<SerializableHeader> mHeaders;
 	
 	public RESTRequest(HTTPVerb verb, UUID id, String url) {
 		super();
 		mVerb = verb;
 		mID = id;
 		mUrl = url;
+		mHeaders = new ArrayList<SerializableHeader>();
 	}
 	
 	public RESTRequest(HTTPVerb verb, UUID id, String url, Bundle extraParams) {
@@ -34,6 +38,7 @@ public class RESTRequest implements Serializable {
 		mID = id;
 		mUrl = url;
 		mExtraParams = extraParams;
+		mHeaders = new ArrayList<SerializableHeader>();
 	}
 
 	protected OnFinishedRequestListener mOnFinishedRequestListener;
@@ -46,6 +51,10 @@ public class RESTRequest implements Serializable {
 		return mID;
 	}
 	
+	public List<SerializableHeader> getHeaders() {
+		return mHeaders;
+	}
+
 	public OnFinishedRequestListener getListener() {
 		return mOnFinishedRequestListener;
 	}
@@ -70,8 +79,19 @@ public class RESTRequest implements Serializable {
 		this.mVerb = mVerb;
 	}
 	
-	
-	
+	public class SerializableHeader extends BasicHeader implements Serializable {
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = -3589739936804187767L;
+		
+		public SerializableHeader(String name, String value) {
+			super(name, value);
+			// TODO Auto-generated constructor stub
+		}
+		
+	}
 	
 	
 }

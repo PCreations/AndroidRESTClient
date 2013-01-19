@@ -7,7 +7,9 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.net.UnknownServiceException;
+import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -19,6 +21,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.util.Log;
+
+import com.pcreations.restclient.RESTRequest.SerializableHeader;
 
 public class HttpRequestHandler {
 
@@ -39,11 +43,12 @@ public class HttpRequestHandler {
 		mHttpClient = new DefaultHttpClient();
 	}
 	
-	public void get(String url) {
+	public void get(RESTRequest r) {
 		mRequest = new HttpGet();
-		Log.d("tag", "Executing GET request: " + url);
+		setHeaders(mRequest, r.getHeaders());
+		Log.d("tag", "Executing GET request: " + r.getUrl());
 		try {
-			mRequest.setURI(new URI(url));
+			mRequest.setURI(new URI(r.getUrl()));
 			processRequest();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
@@ -52,16 +57,24 @@ public class HttpRequestHandler {
 		}
 	}
 	
-	public void post(String url) {
-		mRequest = new HttpPost(url);
+	public void post(RESTRequest r) {
+		mRequest = new HttpPost(r.getUrl());
 		mRequest.setHeader("Content-Type", "application/json");
 		try {
-			mRequest.setURI(new URI(url));
+			mRequest.setURI(new URI(r.getUrl()));
 			processRequest();
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, null);
+		}
+	}
+	
+	private void setHeaders(HttpRequestBase httpRequest, List<SerializableHeader> headers) {
+		if(null != headers) {
+			for(Header h : headers) {
+				httpRequest.addHeader(h);
+			}
 		}
 	}
 	

@@ -22,10 +22,10 @@ public abstract class Processor {
 		//mCurrentResource.setName(mCurrentResource);
 		//mCurrentResource.setState(RequestState.STATE_RETRIEVING);
 		//mResourcesManager.createOrupdate(mCurrentResource);
-		processRequest(r.getUrl(), r.getVerb());
+		processRequest(r);
 	}
 	
-	protected void processRequest(String url, HTTPVerb verb) {
+	protected void processRequest(RESTRequest r) {
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
@@ -36,9 +36,9 @@ public abstract class Processor {
 			
 		});
 		//TODO handle other verb
-		switch(verb) {
+		switch(r.getVerb()) {
 			case GET:
-				mHttpRequestHandler.get(url);
+				mHttpRequestHandler.get(r);
 				break;
 		}
 		

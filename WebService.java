@@ -17,8 +17,6 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
-	protected Uri mUri;
-	protected Intent mIntent;
 	protected Processor mProcessor;
 	protected OnFinishedRequestListener onFinishedRequestListener;
 	protected List<RESTRequest> mRequestCollection;
@@ -28,7 +26,6 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		mContext = context;
 		setProcessor();
 		RestService.setProcessor(mProcessor);
-		mIntent = new Intent(mContext, RestService.class);
 		mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
         mRequestCollection = new ArrayList<RESTRequest>();
@@ -65,29 +62,18 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	protected void initAndStartService(RESTRequest request) {
-		setData(request.getUrl());
-		mIntent.putExtra(RestService.REQUEST_KEY, request);
-		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
+		Intent i = new Intent(mContext, RestService.class);
+		i.setData(Uri.parse(request.getUrl()));
+		i.putExtra(RestService.REQUEST_KEY, request);
+		i.putExtra(RestService.RECEIVER_KEY, mReceiver);
 		Log.d(RestService.TAG, "startService");
-		mContext.startService(mIntent);
-	}
-	
-	private void setData(String uri) {
-		mUri = Uri.parse(uri);
-		mIntent.setData(mUri);
+		mContext.startService(i);
 	}
 	
 	protected UUID generateID() {
 		return UUID.randomUUID();
 	}
 	
-	public Uri getUri() {
-		return mUri;
-	}
-
-	public void setUri(Uri mUri) {
-		this.mUri = mUri;
-	}
 
 	public void setOnFinishedRequestListener(OnFinishedRequestListener listener) {
 		onFinishedRequestListener = listener;
@@ -101,8 +87,9 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		for(RESTRequest request : mRequestCollection) {
 			if(request.getID().equals(r.getID())) {
 				request.getListener().onFinishedRequest(resultCode);
+				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
+				mContext.stopService(i);
 			}
 		}
-		mContext.stopService(mIntent);
 	}	
 }
