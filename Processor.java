@@ -17,15 +17,15 @@ public abstract class Processor {
 
 	abstract public void setResourcesManager();
 	
-	public void get(String url, int method) {
+	protected void preRequestProcess(RESTRequest r) {
 		//GESTION BDD
 		//mCurrentResource.setName(mCurrentResource);
 		//mCurrentResource.setState(RequestState.STATE_RETRIEVING);
 		//mResourcesManager.createOrupdate(mCurrentResource);
-		processRequest(url, method);
+		processRequest(r.getUrl(), r.getVerb());
 	}
 	
-	protected void processRequest(String url, int method) {
+	protected void processRequest(String url, HTTPVerb verb) {
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
@@ -35,7 +35,13 @@ public abstract class Processor {
 			}
 			
 		});
-		mHttpRequestHandler.get(url);
+		//TODO handle other verb
+		switch(verb) {
+			case GET:
+				mHttpRequestHandler.get(url);
+				break;
+		}
+		
 	}
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {

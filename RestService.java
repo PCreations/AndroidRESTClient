@@ -38,25 +38,17 @@ public class RestService extends IntentService{
      
         });
 		mIntent = intent;
-		Uri uri = intent.getData();
 		Bundle bundle = intent.getExtras();
-		int method = bundle.getInt(RestService.METHOD_KEY);
-		//Bundle params = bundle.getParcelable(WebService.PARAMS_KEY);
-        switch(method) {
-            case WebService.GET:
-                RestService.processor.get(uri.toString(), method);
-            break;
-            case WebService.POST:
-                //RestService.processor.post(uri.toString(), method);
-            break;
-        }
+		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
+        RestService.processor.preRequestProcess(r);
 	}
 	
 	private void handleRESTServiceCallback(int statusCode) {
 		Bundle bundle = mIntent.getExtras();
 		ResultReceiver receiver = bundle.getParcelable(RestService.RECEIVER_KEY);
+		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
 		Bundle resultData = new Bundle();
-        resultData.putParcelable(RestService.INTENT_KEY, mIntent);
+        resultData.putSerializable(RestService.REQUEST_KEY, r);
         receiver.send(statusCode, resultData);
 	}
 	

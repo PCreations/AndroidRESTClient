@@ -21,14 +21,16 @@ public class RESTRequest implements Serializable {
 	private Bundle mExtraParams;
 	private List mHeaders;
 	
-	public RESTRequest(UUID id, String url) {
+	public RESTRequest(HTTPVerb verb, UUID id, String url) {
 		super();
+		mVerb = verb;
 		mID = id;
 		mUrl = url;
 	}
 	
-	public RESTRequest(UUID id, String url, Bundle extraParams) {
+	public RESTRequest(HTTPVerb verb, UUID id, String url, Bundle extraParams) {
 		super();
+		mVerb = verb;
 		mID = id;
 		mUrl = url;
 		mExtraParams = extraParams;
@@ -49,7 +51,7 @@ public class RESTRequest implements Serializable {
 	}
 	
 	public interface OnFinishedRequestListener {
-        public abstract void onFinishedRequest(int resultCode, Bundle bundle);
+        public abstract void onFinishedRequest(int resultCode);
     }
 
 	public String getUrl() {
@@ -59,6 +61,16 @@ public class RESTRequest implements Serializable {
 	public void setUrl(String url) {
 		this.mUrl = url;
 	}
+
+	public HTTPVerb getVerb() {
+		return mVerb;
+	}
+
+	public void setVerb(HTTPVerb mVerb) {
+		this.mVerb = mVerb;
+	}
+	
+	
 	
 	
 	

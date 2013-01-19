@@ -15,11 +15,6 @@ import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public final static int GET = 0;
-	public final static int POST = 1;
-	public final static int PUT = 2;
-	public final static int DELETE = 3;
-	
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Uri mUri;
@@ -44,47 +39,42 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected RESTRequest get(String uri) {
 		UUID requestID = generateID();
 		Log.d(RestService.TAG, "WebService.get()");
-		startService();
-		RESTRequest r = createNewRequest(requestID, uri);
-		initService(r);
+		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri);
+		initAndStartService(r);
 		return r;
 	}
 	
 	protected RESTRequest get(String uri, Bundle extraParams) {
 		UUID requestID = generateID();
 		Log.d(RestService.TAG, "WebService.get()");
-		RESTRequest r = createNewRequest(requestID, uri, extraParams);
-		initService(r);
+		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri, extraParams);
+		initAndStartService(r);
 		return r;
 	}
 	
-	protected RESTRequest createNewRequest(UUID requestID, String uri) {
-		RESTRequest r = new RESTRequest(requestID, uri);
+	protected RESTRequest createNewRequest(HTTPVerb verb, UUID requestID, String uri) {
+		RESTRequest r = new RESTRequest(verb, requestID, uri);
 		mRequestCollection.add(r);
 		return r;
 	}
 	
-	protected RESTRequest createNewRequest(UUID requestID, String uri, Bundle extraParams) {
-		RESTRequest r = new RESTRequest(requestID, uri, extraParams);
+	protected RESTRequest createNewRequest(HTTPVerb verb, UUID requestID, String uri, Bundle extraParams) {
+		RESTRequest r = new RESTRequest(verb, requestID, uri, extraParams);
 		mRequestCollection.add(r);
 		return r;
 	}
 	
-	protected void initService(RESTRequest request) {
+	protected void initAndStartService(RESTRequest request) {
 		setData(request.getUrl());
 		mIntent.putExtra(RestService.REQUEST_KEY, request);
 		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
-		//TODO requestID
+		Log.d(RestService.TAG, "startService");
+		mContext.startService(mIntent);
 	}
 	
 	private void setData(String uri) {
 		mUri = Uri.parse(uri);
 		mIntent.setData(mUri);
-	}
-	
-	protected void startService() {
-		Log.d(RestService.TAG, "startService");
-		mContext.startService(mIntent);
 	}
 	
 	protected UUID generateID() {

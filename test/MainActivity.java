@@ -1,9 +1,6 @@
 package com.pcreations.restclient.test;
 
-import java.util.UUID;
-
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -32,15 +29,11 @@ public class MainActivity extends Activity  {
     	testRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
 
 			@Override
-			public void onFinishedRequest(int resultCode, Bundle bundle) {
+			public void onFinishedRequest(int resultCode) {
 				// TODO Auto-generated method stub
-				Intent i = bundle.getParcelable(RestService.INTENT_KEY);
-				Bundle extras = i.getExtras();
-				UUID requestID = (UUID) extras.getSerializable(RestService.REQUEST_ID);
-				Log.d(RestService.TAG, "Requête terminé : " + requestID.toString());
-				Log.d(RestService.TAG, "Result code : " + String.valueOf(resultCode));
+				Log.d(RestService.TAG, "resultCode = " + String.valueOf(resultCode));
+				Log.d(RestService.TAG, "Requête terminé : " + testRequest.getID().toString());
 			}
-    		
     	});
     	
     }
