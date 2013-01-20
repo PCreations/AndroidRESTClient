@@ -1,5 +1,7 @@
 package com.pcreations.restclient.test;
 
+import java.util.Date;
+
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.pcreations.restclient.ResourceRepresentation;
@@ -19,6 +21,9 @@ public class TestResource implements ResourceRepresentation {
 	
 	@DatabaseField
 	private int mResourceId;
+	
+	@DatabaseField
+	private Date mTimestamp;
 	
 	@DatabaseField(columnName=NAME_COLUMN)
 	private String mName;
@@ -106,5 +111,15 @@ public class TestResource implements ResourceRepresentation {
 	@Override
 	public boolean getTransactingFlag() {
 		return mTransactingFlag;
+	}
+
+	@Override
+	public Date getResourceTimestamp() {
+		return mTimestamp;
+	}
+
+	@Override
+	public void setResourceTimestamp(Date timestamp) {
+		mTimestamp = timestamp;
 	}
 }
