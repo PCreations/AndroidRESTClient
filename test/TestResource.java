@@ -1,9 +1,7 @@
 package com.pcreations.restclient.test;
 
-import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
-import com.pcreations.restclient.RequestState;
 import com.pcreations.restclient.ResourceRepresentation;
 
 @DatabaseTable(tableName = "resources", daoClass=TestResourceDao.class)
@@ -19,11 +17,17 @@ public class TestResource implements ResourceRepresentation {
 	@DatabaseField(generatedId=true)
 	private int id;
 	
+	@DatabaseField
+	private int mResourceId;
+	
 	@DatabaseField(columnName=NAME_COLUMN)
 	private String mName;
 	
 	@DatabaseField
 	private int mState;
+	
+	@DatabaseField
+	private boolean mTransactingFlag;
 	
 	@DatabaseField
 	private int mResultCode;
@@ -78,5 +82,21 @@ public class TestResource implements ResourceRepresentation {
 
 	public String toString() {
 		return "name[" + mName + "], mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]";
+	}
+
+	@Override
+	public int getResourceId() {
+		return mResourceId;
+	}
+
+	@Override
+	public void setResourceId(int id) {
+		mResourceId = id;
+		
+	}
+
+	@Override
+	public void setTransactingFlag(boolean transacting) {
+		mTransactingFlag = transacting;
 	}
 }

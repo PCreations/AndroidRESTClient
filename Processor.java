@@ -26,6 +26,7 @@ public abstract class Processor {
 		//GESTION BDD
 		if(WebService.FLAG_RESOURCE) {
 			ResourceRepresentation resource = r.getResourceRepresentation();
+			resource.setTransactingFlag(true);
 			switch(r.getVerb()) {
 				case GET:
 					resource.setState(RequestState.STATE_RETRIEVING);
@@ -42,8 +43,6 @@ public abstract class Processor {
 			}
 			try {
 				mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
-				TestResource t = mResourceDaoGetter.getResourceDao().findByName("test");
-				Log.d(RestService.TAG, t.toString());
 				processRequest(r);
 			} catch (SQLException e) {
 				// TODO Auto-generated catch block
