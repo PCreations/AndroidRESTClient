@@ -112,7 +112,9 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
 		for(RESTRequest request : mRequestCollection) {
 			if(request.getID().equals(r.getID())) {
-				request.getListener().onFinishedRequest(resultCode);
+				if(request.getListener() != null) {
+					request.getListener().onFinishedRequest(resultCode);
+				}
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
 				mContext.stopService(i);
 			}

@@ -57,9 +57,9 @@ public abstract class Processor {
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
-			public void callAction(int statusCode, InputStream resultStream) {
+			public void callAction(int statusCode, RESTRequest request, InputStream resultStream) {
 				// TODO Auto-generated method stub
-				handleHttpRequestHandlerCallback(statusCode, resultStream);
+				handleHttpRequestHandlerCallback(statusCode, request, resultStream);
 			}
 			
 		});
@@ -72,10 +72,16 @@ public abstract class Processor {
 		
 	}
 	
-	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
+	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
-		Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
-		mRESTServiceCallback.callAction(statusCode);
+		try {
+			mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
+			Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
+			mRESTServiceCallback.callAction(statusCode);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setRESTServiceCallback(RESTServiceCallback callback) {
@@ -97,9 +103,9 @@ public abstract class Processor {
 		 */
 		try {
 			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findById(request.getResourceRepresentation().getResourceId());
-			Log.w(RestService.TAG, resource.toString());
 			if(null != resource) {
-				if(resource.getTransactingFlag()) {
+				Log.w(RestService.TAG, resource.toString());
+				if(!resource.getTransactingFlag()) {
 					if(resource.getResultCode() == 200) {
 						Log.e(RestService.TAG, "La requête s'est bien déroulée : je ne fait rien et je renvoie false");
 						return false;

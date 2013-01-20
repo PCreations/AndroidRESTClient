@@ -62,11 +62,11 @@ public class HttpRequestHandler {
 		Log.d("tag", "Executing GET request: " + r.getUrl());
 		try {
 			mRequest.setURI(new URI(r.getUrl()));
-			processRequest();
+			processRequest(r);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, null);
+			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, r, null);
 		}
 	}
 	
@@ -75,11 +75,12 @@ public class HttpRequestHandler {
 		mRequest.setHeader("Content-Type", "application/json");
 		try {
 			mRequest.setURI(new URI(r.getUrl()));
-			processRequest();
+			processRequest(r);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, null);
+			
+			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, r, null);
 		}
 	}
 	
@@ -91,7 +92,8 @@ public class HttpRequestHandler {
 		}
 	}
 	
-	private void processRequest() {
+	private void processRequest(RESTRequest request) {
+		for(int i=0; i<100000; ++i);
 		HttpResponse response = null;
 		int statusCode = 0;
 		InputStream IS = null;
@@ -123,11 +125,13 @@ public class HttpRequestHandler {
 			Log.e(RestService.TAG, "IO_EXCEPTION");
 			e.printStackTrace();
 		}
-		mProcessorCallback.callAction(statusCode, IS);
+		request.getResourceRepresentation().setResultCode(statusCode);
+		request.getResourceRepresentation().setTransactingFlag(false);
+		mProcessorCallback.callAction(statusCode, request, IS);
 	}
 	
 	public interface ProcessorCallback {
-		abstract public void callAction(int statusCode, InputStream resultStream);
+		abstract public void callAction(int statusCode, RESTRequest request, InputStream resultStream);
 	}
 	
 	public void setProcessorCallback(ProcessorCallback callback) {
