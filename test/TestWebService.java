@@ -19,7 +19,7 @@ public class TestWebService extends WebService {
 	}
 
 	public RESTRequest test() {
-		mCurrentResource = new TestResource("test");
+		mCurrentResource = new TestResource("test", 1);
 		return get("http://pcreations.fr/labs/facteo/distribution_centers/get/1.json");
 	}
 

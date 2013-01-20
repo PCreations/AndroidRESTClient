@@ -14,20 +14,21 @@ public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implemen
 		// TODO Auto-generated constructor stub
 	}
 	
-	public TestResource findByName(String name) {
+	public TestResource findByName(String name) throws SQLException {
 		TestResource resource = null;
-		try {
-			PreparedQuery<TestResource> q = queryBuilder().where().eq(TestResource.NAME_COLUMN, name).prepare();
-			resource = queryForFirst(q);
-		}catch(SQLException e) {
-			e.printStackTrace();
-		}
+		PreparedQuery<TestResource> q = queryBuilder().where().eq(TestResource.NAME_COLUMN, name).prepare();
+		resource = queryForFirst(q);
 		return resource;
 	}
 
 	@Override
 	public void updateOrCreate(TestResource resource) throws SQLException {
 		createOrUpdate(resource);
+	}
+
+	@Override
+	public TestResource findById(int resourceId) throws SQLException {
+		return queryForId(resourceId);
 	}
 
 }

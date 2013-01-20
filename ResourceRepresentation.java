@@ -9,6 +9,7 @@ public interface ResourceRepresentation extends Serializable {
 	abstract public String getName();
 	abstract public int getState();
 	abstract public int getResultCode();
+	abstract public boolean getTransactingFlag();
 	abstract public void setName(String name);
 	abstract public void setState(int stateRetrieving);
 	abstract public void setTransactingFlag(boolean transacting);

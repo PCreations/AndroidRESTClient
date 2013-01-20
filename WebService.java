@@ -75,17 +75,21 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
+		boolean proceedRequest = true;
 		if(FLAG_RESOURCE) {
 			if(null == mCurrentResource)
 				throw new CurrentResourceNotInitializedException();
 			request.setResourceRepresentation(mCurrentResource);
+			proceedRequest = mProcessor.checkRequest(request);
 		}
-		Intent i = new Intent(mContext, RestService.class);
-		i.setData(Uri.parse(request.getUrl()));
-		i.putExtra(RestService.REQUEST_KEY, request);
-		i.putExtra(RestService.RECEIVER_KEY, mReceiver);
-		Log.d(RestService.TAG, "startService");
-		mContext.startService(i);
+		if(proceedRequest) {
+			Intent i = new Intent(mContext, RestService.class);
+			i.setData(Uri.parse(request.getUrl()));
+			i.putExtra(RestService.REQUEST_KEY, request);
+			i.putExtra(RestService.RECEIVER_KEY, mReceiver);
+			Log.d(RestService.TAG, "startService");
+			mContext.startService(i);
+		}
 	}
 	
 	protected void setCurrentResource(ResourceRepresentation resource) {

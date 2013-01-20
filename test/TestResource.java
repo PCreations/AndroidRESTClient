@@ -36,17 +36,20 @@ public class TestResource implements ResourceRepresentation {
 		super();
 	}
 	
-	public TestResource(String mName) {
+	public TestResource(String mName, int mResourceId) {
 		super();
 		this.mName = mName;
+		this.mResourceId = mResourceId;
 	}
 	
-	public TestResource(int id, String mName, int mState,
-			int mResultCode) {
+	public TestResource(int id, int mResourceId, String mName, int mState,
+			boolean mTransactingFlag, int mResultCode) {
 		super();
 		this.id = id;
+		this.mResourceId = mResourceId;
 		this.mName = mName;
 		this.mState = mState;
+		this.mTransactingFlag = mTransactingFlag;
 		this.mResultCode = mResultCode;
 	}
 
@@ -81,7 +84,7 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	public String toString() {
-		return "name[" + mName + "], mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]";
+		return "name[" + mName + "], resourceID = " + String.valueOf(mResourceId) + "mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]" + "mTransactingFlas = " + String.valueOf(mTransactingFlag);
 	}
 
 	@Override
@@ -98,5 +101,10 @@ public class TestResource implements ResourceRepresentation {
 	@Override
 	public void setTransactingFlag(boolean transacting) {
 		mTransactingFlag = transacting;
+	}
+
+	@Override
+	public boolean getTransactingFlag() {
+		return mTransactingFlag;
 	}
 }

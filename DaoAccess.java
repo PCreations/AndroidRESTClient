@@ -5,6 +5,7 @@ import java.sql.SQLException;
 public interface DaoAccess<R> {
 
 	abstract public void updateOrCreate(R resource)throws SQLException;
-	abstract public R findByName(String string);
+	abstract public R findByName(String string) throws SQLException;
+	abstract public R findById(int resourceId) throws SQLException;
 	
 }

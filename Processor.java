@@ -85,5 +85,37 @@ public abstract class Processor {
 	public interface RESTServiceCallback {
 		abstract public void callAction(int statusCode);
 	}
+
+	public boolean checkRequest(RESTRequest request) {
+		/*
+		 * 1. Est-ce qu'une requête est déjà en cours pour cet id de resource ?
+		 * 2. Si oui quel le transacting flag vaut il true ?
+		 * 3. Si oui alors on ne fait rien on attend
+		 * 4. Si non le code de retour vaut il 200 ?
+		 * 5. Si oui alors tout s'est bien passé on ne refait rien
+		 * 6. Si non alors on relance la requête
+		 */
+		try {
+			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findById(request.getResourceRepresentation().getResourceId());
+			Log.w(RestService.TAG, resource.toString());
+			if(null != resource) {
+				if(resource.getTransactingFlag()) {
+					if(resource.getResultCode() == 200) {
+						Log.e(RestService.TAG, "La requête s'est bien déroulée : je ne fait rien et je renvoie false");
+						return false;
+					}
+					Log.e(RestService.TAG, "La requête s'est mal déroulée : je la relance et je renvoie true");
+					return true;
+				}
+				Log.e(RestService.TAG, "La requête est en cours : j'attends et je renvoie false");
+				return false;
+			}
+			Log.e(RestService.TAG, "Je ne manipule pas la même resource et je renvoie true");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
+	}
 	
 }
