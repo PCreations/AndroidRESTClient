@@ -39,19 +39,22 @@ public class TestResource implements ResourceRepresentation {
 	
 	public TestResource() {
 		super();
+		mTimestamp = new Date();
 	}
 	
 	public TestResource(String mName, int mResourceId) {
 		super();
 		this.mName = mName;
 		this.mResourceId = mResourceId;
+		this.mTimestamp = new Date();
 	}
 	
-	public TestResource(int id, int mResourceId, String mName, int mState,
+	public TestResource(int id, int mResourceId, Date mTimestamp, String mName, int mState,
 			boolean mTransactingFlag, int mResultCode) {
 		super();
 		this.id = id;
 		this.mResourceId = mResourceId;
+		this.mTimestamp = new Date();
 		this.mName = mName;
 		this.mState = mState;
 		this.mTransactingFlag = mTransactingFlag;
@@ -89,7 +92,7 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	public String toString() {
-		return "name[" + mName + "], resourceID = " + String.valueOf(mResourceId) + "mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]" + "mTransactingFlas = " + String.valueOf(mTransactingFlag);
+		return "date["+mTimestamp.toString()+"], name[" + mName + "], resourceID = " + String.valueOf(mResourceId) + "mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]" + "mTransactingFlas = " + String.valueOf(mTransactingFlag);
 	}
 
 	@Override
