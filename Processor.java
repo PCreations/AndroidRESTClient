@@ -21,6 +21,7 @@ public abstract class Processor {
 	}
 
 	abstract public void setResourceDaoGetter();
+	abstract protected void postProcess(RESTRequest r, InputStream resultStream);
 	
 	protected void preRequestProcess(RESTRequest r) {
 		//GESTION BDD
@@ -79,6 +80,7 @@ public abstract class Processor {
 		try {
 			mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
 			Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
+			postProcess(request, resultStream);
 			mRESTServiceCallback.callAction(statusCode, request);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
