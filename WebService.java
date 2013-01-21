@@ -12,89 +12,95 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
+import com.pcreations.restclient.exceptions.CurrentResourceNotInitializedException;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public final static int GET = 0;
-	public final static int POST = 1;
-	public final static int PUT = 2;
-	public final static int DELETE = 3;
-	
+	public static final boolean FLAG_RESOURCE = true;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
-	protected Uri mUri;
-	protected Intent mIntent;
 	protected Processor mProcessor;
 	protected OnFinishedRequestListener onFinishedRequestListener;
 	protected List<RESTRequest> mRequestCollection;
+	protected ResourceRepresentation mCurrentResource;
 	
 	public WebService(Context context) {
 		super();
 		mContext = context;
 		setProcessor();
 		RestService.setProcessor(mProcessor);
-		mIntent = new Intent(mContext, RestService.class);
 		mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
         mRequestCollection = new ArrayList<RESTRequest>();
 	}
 	
-	protected abstract void setProcessor();
-	
-	protected RESTRequest get(String uri) {
-		UUID requestID = generateID();
-		initService(requestID, GET, uri);
-		Log.d(RestService.TAG, "WebService.get()");
-		startService();
-		RESTRequest r = createNewRequest(requestID);
-		return r;
-	}
-	
-	protected RESTRequest get(String uri, Bundle extraParams) {
-		UUID requestID = generateID();
-		initService(requestID, GET, uri, extraParams);
-		Log.d(RestService.TAG, "WebService.get()");
-		RESTRequest r = createNewRequest(requestID);
-		return r;
-	}
-	
-	protected RESTRequest createNewRequest(UUID requestID) {
-		RESTRequest r = new RESTRequest(requestID);
+	public RESTRequest newRequest() {
+		RESTRequest r = new RESTRequest(generateID());
 		mRequestCollection.add(r);
 		return r;
 	}
 	
-	protected void initService(UUID requestID, int method, String uri) {
-		setData(uri);
-		mIntent.putExtra(RestService.REQUEST_ID, requestID);
-		mIntent.putExtra(RestService.METHOD_KEY, method);
-		mIntent.putExtra(RestService.RECEIVER_KEY, mReceiver);
-		//TODO requestID
+	protected abstract void setProcessor();
+	
+	protected void get(RESTRequest r, String uri) {
+		Log.d(RestService.TAG, "WebService.get()");
+		initRequest(r, HTTPVerb.GET,  uri);
+		try {
+			initAndStartService(r);
+		} catch (CurrentResourceNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private void setData(String uri) {
-		mUri = Uri.parse(uri);
-		mIntent.setData(mUri);
+	protected void get(RESTRequest r, String uri, Bundle extraParams) {
+		Log.d(RestService.TAG, "WebService.get()");
+		initRequest(r, HTTPVerb.GET, uri, extraParams);
+		try {
+			initAndStartService(r);
+		} catch (CurrentResourceNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	abstract protected void initService(UUID requestID, int method, String uri, Bundle extraParams);
+	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri) {
+		r.setVerb(verb);
+		r.setUrl(uri);
+	}
 	
-	protected void startService() {
-		Log.d(RestService.TAG, "startService");
-		mContext.startService(mIntent);
+	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri, Bundle extraParams) {
+		r.setVerb(verb);
+		r.setUrl(uri);
+		r.setExtraParams(extraParams);
+	}
+	
+	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
+		boolean proceedRequest = true;
+		if(FLAG_RESOURCE) {
+			if(null == mCurrentResource)
+				throw new CurrentResourceNotInitializedException();
+			request.setResourceRepresentation(mCurrentResource);
+			proceedRequest = mProcessor.checkRequest(request);
+		}
+		if(proceedRequest) {
+			Intent i = new Intent(mContext, RestService.class);
+			i.setData(Uri.parse(request.getUrl()));
+			i.putExtra(RestService.REQUEST_KEY, request);
+			i.putExtra(RestService.RECEIVER_KEY, mReceiver);
+			Log.d(RestService.TAG, "startService");
+			mContext.startService(i);
+		}
+	}
+	
+	protected void setCurrentResource(ResourceRepresentation resource) {
+		mCurrentResource = resource;
 	}
 	
 	protected UUID generateID() {
 		return UUID.randomUUID();
 	}
 	
-	public Uri getUri() {
-		return mUri;
-	}
-
-	public void setUri(Uri mUri) {
-		this.mUri = mUri;
-	}
 
 	public void setOnFinishedRequestListener(OnFinishedRequestListener listener) {
 		onFinishedRequestListener = listener;
@@ -104,14 +110,17 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d(RestService.TAG, "onReceiveResult");
-		Intent i = resultData.getParcelable(RestService.INTENT_KEY);
-		Bundle extras = i.getExtras();
-		UUID requestID = (UUID) extras.getSerializable(RestService.REQUEST_ID);
+		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
+		Log.w(RestService.TAG, "dans onReceiveResult" + r.getResourceRepresentation().toString());
 		for(RESTRequest request : mRequestCollection) {
-			if(request.getID().equals(requestID)) {
-				request.getListener().onFinishedRequest(resultCode, resultData);
+			if(request.getID().equals(r.getID())) {
+				if(request.getListener() != null) {
+					request.setResourceRepresentation(r.getResourceRepresentation());
+					request.getListener().onFinishedRequest(resultCode);
+				}
+				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
+				mContext.stopService(i);
 			}
 		}
-		mContext.stopService(mIntent);
 	}	
 }
