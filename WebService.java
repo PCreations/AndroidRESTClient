@@ -34,44 +34,45 @@ public abstract class WebService implements RestResultReceiver.Receiver{
         mRequestCollection = new ArrayList<RESTRequest>();
 	}
 	
+	public RESTRequest newRequest() {
+		RESTRequest r = new RESTRequest(generateID());
+		mRequestCollection.add(r);
+		return r;
+	}
+	
 	protected abstract void setProcessor();
 	
-	protected RESTRequest get(String uri) {
-		UUID requestID = generateID();
+	protected void get(RESTRequest r, String uri) {
 		Log.d(RestService.TAG, "WebService.get()");
-		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri);
+		initRequest(r, HTTPVerb.GET,  uri);
 		try {
 			initAndStartService(r);
 		} catch (CurrentResourceNotInitializedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return r;
 	}
 	
-	protected RESTRequest get(String uri, Bundle extraParams) {
-		UUID requestID = generateID();
+	protected void get(RESTRequest r, String uri, Bundle extraParams) {
 		Log.d(RestService.TAG, "WebService.get()");
-		RESTRequest r = createNewRequest(HTTPVerb.GET, requestID, uri, extraParams);
+		initRequest(r, HTTPVerb.GET, uri, extraParams);
 		try {
 			initAndStartService(r);
 		} catch (CurrentResourceNotInitializedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return r;
 	}
 	
-	protected RESTRequest createNewRequest(HTTPVerb verb, UUID requestID, String uri) {
-		RESTRequest r = new RESTRequest(verb, requestID, uri);
-		mRequestCollection.add(r);
-		return r;
+	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri) {
+		r.setVerb(verb);
+		r.setUrl(uri);
 	}
 	
-	protected RESTRequest createNewRequest(HTTPVerb verb, UUID requestID, String uri, Bundle extraParams) {
-		RESTRequest r = new RESTRequest(verb, requestID, uri, extraParams);
-		mRequestCollection.add(r);
-		return r;
+	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri, Bundle extraParams) {
+		r.setVerb(verb);
+		r.setUrl(uri);
+		r.setExtraParams(extraParams);
 	}
 	
 	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
@@ -110,9 +111,11 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d(RestService.TAG, "onReceiveResult");
 		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
+		Log.w(RestService.TAG, "dans onReceiveResult" + r.getResourceRepresentation().toString());
 		for(RESTRequest request : mRequestCollection) {
 			if(request.getID().equals(r.getID())) {
 				if(request.getListener() != null) {
+					request.setResourceRepresentation(r.getResourceRepresentation());
 					request.getListener().onFinishedRequest(resultCode);
 				}
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);

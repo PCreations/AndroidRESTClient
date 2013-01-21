@@ -22,9 +22,6 @@ public class TestResource implements ResourceRepresentation {
 	@DatabaseField
 	private int mResourceId;
 	
-	@DatabaseField
-	private Date mTimestamp;
-	
 	@DatabaseField(columnName=NAME_COLUMN)
 	private String mName;
 	
@@ -39,14 +36,12 @@ public class TestResource implements ResourceRepresentation {
 	
 	public TestResource() {
 		super();
-		mTimestamp = new Date();
 	}
 	
 	public TestResource(String mName, int mResourceId) {
 		super();
 		this.mName = mName;
 		this.mResourceId = mResourceId;
-		this.mTimestamp = new Date();
 	}
 	
 	public TestResource(int id, int mResourceId, Date mTimestamp, String mName, int mState,
@@ -54,7 +49,6 @@ public class TestResource implements ResourceRepresentation {
 		super();
 		this.id = id;
 		this.mResourceId = mResourceId;
-		this.mTimestamp = new Date();
 		this.mName = mName;
 		this.mState = mState;
 		this.mTransactingFlag = mTransactingFlag;
@@ -92,7 +86,7 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	public String toString() {
-		return "date["+mTimestamp.toString()+"], name[" + mName + "], resourceID = " + String.valueOf(mResourceId) + "mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]" + "mTransactingFlas = " + String.valueOf(mTransactingFlag);
+		return "name[" + mName + "], resourceID = " + String.valueOf(mResourceId) + "mState = [" + String.valueOf(mState) + "], mResultCode = [" + String.valueOf(mResultCode) + "]" + "mTransactingFlas = " + String.valueOf(mTransactingFlag);
 	}
 
 	@Override
@@ -116,13 +110,4 @@ public class TestResource implements ResourceRepresentation {
 		return mTransactingFlag;
 	}
 
-	@Override
-	public Date getResourceTimestamp() {
-		return mTimestamp;
-	}
-
-	@Override
-	public void setResourceTimestamp(Date timestamp) {
-		mTimestamp = timestamp;
-	}
 }

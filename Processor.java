@@ -27,6 +27,7 @@ public abstract class Processor {
 		if(WebService.FLAG_RESOURCE) {
 			ResourceRepresentation resource = r.getResourceRepresentation();
 			resource.setTransactingFlag(true);
+			Log.e(RestService.TAG, "resource dans preProcessRequest = " + r.getResourceRepresentation().toString());
 			switch(r.getVerb()) {
 				case GET:
 					resource.setState(RequestState.STATE_RETRIEVING);
@@ -74,10 +75,11 @@ public abstract class Processor {
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
+		Log.e(RestService.TAG, "resource dans HttpRequestHandlerCallback = " + request.getResourceRepresentation().toString());
 		try {
 			mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
 			Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
-			mRESTServiceCallback.callAction(statusCode);
+			mRESTServiceCallback.callAction(statusCode, request);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -89,7 +91,7 @@ public abstract class Processor {
 	}
 	
 	public interface RESTServiceCallback {
-		abstract public void callAction(int statusCode);
+		abstract public void callAction(int statusCode, RESTRequest r);
 	}
 
 	public boolean checkRequest(RESTRequest request) {

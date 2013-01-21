@@ -27,9 +27,9 @@ public class RestService extends IntentService{
 		RestService.processor.setRESTServiceCallback(new RESTServiceCallback() {
 
 			@Override
-			public void callAction(int statusCode) {
+			public void callAction(int statusCode, RESTRequest r) {
 				// TODO Auto-generated method stub
-				handleRESTServiceCallback(statusCode);
+				handleRESTServiceCallback(statusCode, r);
 			}
      
         });
@@ -39,10 +39,10 @@ public class RestService extends IntentService{
         RestService.processor.preRequestProcess(r);
 	}
 	
-	private void handleRESTServiceCallback(int statusCode) {
+	private void handleRESTServiceCallback(int statusCode, RESTRequest r) {
 		Bundle bundle = mIntent.getExtras();
 		ResultReceiver receiver = bundle.getParcelable(RestService.RECEIVER_KEY);
-		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
+		Log.e(RestService.TAG, "resource dans handleRESTServiceCallback = " + r.getResourceRepresentation().toString());
 		Bundle resultData = new Bundle();
         resultData.putSerializable(RestService.REQUEST_KEY, r);
         resultData.putParcelable(RestService.INTENT_KEY, mIntent);

@@ -18,9 +18,9 @@ public class TestWebService extends WebService {
 		mProcessor = new TestProcessor();
 	}
 
-	public RESTRequest test() {
+	public void test(RESTRequest r) {
 		mCurrentResource = new TestResource("test", 1);
-		return get("http://pcreations.fr/labs/facteo/distribution_centers/get/1.json");
+		get(r, "http://pcreations.fr/labs/facteo/distribution_centers/get/1.json");
 	}
 
 }

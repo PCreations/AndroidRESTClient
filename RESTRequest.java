@@ -25,6 +25,10 @@ public class RESTRequest implements Serializable {
 	private List<SerializableHeader> mHeaders;
 	private ResourceRepresentation mResourceRepresentation;
 	
+	public RESTRequest(UUID id) {
+		mID = id;
+	}
+	
 	public RESTRequest(HTTPVerb verb, UUID id, String url) {
 		super();
 		mVerb = verb;
@@ -89,6 +93,14 @@ public class RESTRequest implements Serializable {
 		this.mResourceRepresentation = mResourceRepresentation;
 	}
 
+	public void setExtraParams(Bundle extraParams) {
+		mExtraParams = extraParams;
+	}
+	
+	public String toString() {
+		return "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl+", resource = "+mResourceRepresentation.toString();
+	}
+	
 	public class SerializableHeader extends BasicHeader implements Serializable {
 
 		/**
@@ -102,6 +114,5 @@ public class RESTRequest implements Serializable {
 		}
 		
 	}
-	
 	
 }

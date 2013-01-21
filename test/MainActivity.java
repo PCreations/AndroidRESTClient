@@ -19,7 +19,8 @@ public class MainActivity extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
-        testRequest = ws.test();
+        testRequest = ws.newRequest();
+        ws.test(testRequest);
         Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
     }
     
@@ -32,7 +33,7 @@ public class MainActivity extends Activity  {
 			public void onFinishedRequest(int resultCode) {
 				// TODO Auto-generated method stub
 				Log.d(RestService.TAG, "resultCode = " + String.valueOf(resultCode));
-				Log.d(RestService.TAG, "Requête terminé : " + testRequest.getID().toString());
+				Log.d(RestService.TAG, "Requête terminé : " + testRequest.toString());
 			}
     	});
     	
