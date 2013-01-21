@@ -1,52 +1,131 @@
 package com.pcreations.restclient;
 
 import java.io.InputStream;
+import java.sql.SQLException;
 
+import android.util.Log;
+
+import com.j256.ormlite.dao.BaseDaoImpl;
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
+import com.pcreations.restclient.test.TestResource;
 
 public abstract class Processor {
 
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
+	protected ResourceDaoGetter<ResourceRepresentation> mResourceDaoGetter; //could be a DatabaseHelper;
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
+		setResourceDaoGetter();
 	}
 
-	abstract public void setResourcesManager();
+	abstract public void setResourceDaoGetter();
+	abstract protected void postProcess(RESTRequest r, InputStream resultStream);
 	
-	public void get(String url, int method) {
+	protected void preRequestProcess(RESTRequest r) {
 		//GESTION BDD
-		//mCurrentResource.setName(mCurrentResource);
-		//mCurrentResource.setState(RequestState.STATE_RETRIEVING);
-		//mResourcesManager.createOrupdate(mCurrentResource);
-		processRequest(url, method);
+		if(WebService.FLAG_RESOURCE) {
+			ResourceRepresentation resource = r.getResourceRepresentation();
+			resource.setTransactingFlag(true);
+			Log.e(RestService.TAG, "resource dans preProcessRequest = " + r.getResourceRepresentation().toString());
+			switch(r.getVerb()) {
+				case GET:
+					resource.setState(RequestState.STATE_RETRIEVING);
+					break;
+				case POST:
+					resource.setState(RequestState.STATE_POSTING);
+					break;
+				case PUT:
+					resource.setState(RequestState.STATE_UPDATING);
+					break;
+				case DELETE:
+					resource.setState(RequestState.STATE_DELETING);
+					break;
+			}
+			try {
+				mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+				processRequest(r);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		else
+			processRequest(r);
 	}
 	
-	protected void processRequest(String url, int method) {
+	protected void processRequest(RESTRequest r) {
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
-			public void callAction(int statusCode, InputStream resultStream) {
+			public void callAction(int statusCode, RESTRequest request, InputStream resultStream) {
 				// TODO Auto-generated method stub
-				handleHttpRequestHandlerCallback(statusCode, resultStream);
+				handleHttpRequestHandlerCallback(statusCode, request, resultStream);
 			}
 			
 		});
-		mHttpRequestHandler.get(url);
+		//TODO handle other verb
+		switch(r.getVerb()) {
+			case GET:
+				mHttpRequestHandler.get(r);
+				break;
+		}
+		
 	}
 	
-	protected void handleHttpRequestHandlerCallback(int statusCode, InputStream resultStream) {
+	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
-		mRESTServiceCallback.callAction(statusCode);
-	}
-	
-	public interface RESTServiceCallback {
-		abstract public void callAction(int statusCode);
+		Log.e(RestService.TAG, "resource dans HttpRequestHandlerCallback = " + request.getResourceRepresentation().toString());
+		try {
+			mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
+			Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
+			postProcess(request, resultStream);
+			mRESTServiceCallback.callAction(statusCode, request);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void setRESTServiceCallback(RESTServiceCallback callback) {
 		mRESTServiceCallback = callback;
+	}
+	
+	public interface RESTServiceCallback {
+		abstract public void callAction(int statusCode, RESTRequest r);
+	}
+
+	public boolean checkRequest(RESTRequest request) {
+		/*
+		 * 1. Est-ce qu'une requête est déjà en cours pour cet id de resource ?
+		 * 2. Si oui quel le transacting flag vaut il true ?
+		 * 3. Si oui alors on ne fait rien on attend
+		 * 4. Si non le code de retour vaut il 200 ?
+		 * 5. Si oui alors tout s'est bien passé on ne refait rien
+		 * 6. Si non alors on relance la requête
+		 */
+		try {
+			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findById(request.getResourceRepresentation().getResourceId());
+			if(null != resource) {
+				Log.w(RestService.TAG, resource.toString());
+				if(!resource.getTransactingFlag()) {
+					if(resource.getResultCode() == 200) {
+						Log.e(RestService.TAG, "La requête s'est bien déroulée : je ne fait rien et je renvoie false");
+						return false;
+					}
+					Log.e(RestService.TAG, "La requête s'est mal déroulée : je la relance et je renvoie true");
+					return true;
+				}
+				Log.e(RestService.TAG, "La requête est en cours : j'attends et je renvoie false");
+				return false;
+			}
+			Log.e(RestService.TAG, "Je ne manipule pas la même resource et je renvoie true");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return true;
 	}
 	
 }
