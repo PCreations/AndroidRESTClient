@@ -5,9 +5,7 @@ import java.sql.SQLException;
 
 import android.util.Log;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
-import com.pcreations.restclient.test.TestResource;
 
 public abstract class Processor {
 
@@ -97,14 +95,6 @@ public abstract class Processor {
 	}
 
 	public boolean checkRequest(RESTRequest request) {
-		/*
-		 * 1. Est-ce qu'une requête est déjà en cours pour cet id de resource ?
-		 * 2. Si oui quel le transacting flag vaut il true ?
-		 * 3. Si oui alors on ne fait rien on attend
-		 * 4. Si non le code de retour vaut il 200 ?
-		 * 5. Si oui alors tout s'est bien passé on ne refait rien
-		 * 6. Si non alors on relance la requête
-		 */
 		try {
 			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findById(request.getResourceRepresentation().getResourceId());
 			if(null != resource) {
