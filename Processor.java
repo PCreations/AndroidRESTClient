@@ -5,9 +5,7 @@ import java.sql.SQLException;
 
 import android.util.Log;
 
-import com.j256.ormlite.dao.BaseDaoImpl;
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
-import com.pcreations.restclient.test.TestResource;
 
 public abstract class Processor {
 
