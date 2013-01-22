@@ -117,7 +117,8 @@ public class HttpRequestHandler {
 	    			//e.printStackTrace();
 	    		} finally {
 	    			try {
-	    				responseEntity.consumeContent();
+	    				if(null != responseEntity)
+	    					responseEntity.consumeContent();
 	    			} catch (IOException e) {
 	    				// TODO Auto-generated catch block
 	    				e.printStackTrace();
