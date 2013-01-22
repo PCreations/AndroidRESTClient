@@ -79,54 +79,57 @@ public class HttpRequestHandler {
 		}
 	}
 	
-	private void processRequest(RESTRequest request) {
-		Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
-		/*HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
-		HttpResponse response = null;
-		HttpEntity responseEntity = null;
-		int statusCode = 0;
-		InputStream IS = null;
-		try {
-			response = currentHttpContainer.execute();
-			responseEntity = response.getEntity();
-			StatusLine responseStatus = response.getStatusLine();
-			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
-			IS = responseEntity.getContent();
-		} catch (ClientProtocolException e) {
-			// TODO Auto-generated catch block
-			statusCode = CLIENT_PROTOCOL_EXCEPTION;
-			Log.e(RestService.TAG, "CLIENT_PROTOCOL_EXCEPTION");
-			//e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			if(e instanceof UnknownHostException)
-				statusCode = UNKNOWN_HOST_EXCEPTION;
-			else if(e instanceof MalformedURLException)
-				statusCode = MALFORMED_URL_EXCEPTION;
-			else if(e instanceof UnknownServiceException)
-				statusCode = UNKNOWN_SERVICE_EXCEPTION;
-			else if(e instanceof ConnectTimeoutException)
-				statusCode = CONNECT_TIMEOUT_EXCEPTION;
-			else if(e instanceof SocketTimeoutException)
-				statusCode = SOCKET_TIMEOUT_EXCEPTION;
-			else
-				statusCode = IO_EXCEPTION;
-			Log.e(RestService.TAG, "IO_EXCEPTION");
-			//e.printStackTrace();
-		} finally {
-			try {
-				responseEntity.consumeContent();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		if(WebService.FLAG_RESOURCE) {
-			request.getResourceRepresentation().setResultCode(statusCode);
-			request.getResourceRepresentation().setTransactingFlag(false);
-		}
-		mProcessorCallback.callAction(statusCode, request, IS);*/
-		mProcessorCallback.callAction(0, request, null);
+	private void processRequest(final RESTRequest request) {
+		new Thread(new Runnable() {
+	        public void run() {
+	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
+	    		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
+	    		HttpResponse response = null;
+	    		HttpEntity responseEntity = null;
+	    		int statusCode = 0;
+	    		InputStream IS = null;
+	    		try {
+	    			response = currentHttpContainer.execute();
+	    			responseEntity = response.getEntity();
+	    			StatusLine responseStatus = response.getStatusLine();
+	    			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
+	    			IS = responseEntity.getContent();
+	    		} catch (ClientProtocolException e) {
+	    			// TODO Auto-generated catch block
+	    			statusCode = CLIENT_PROTOCOL_EXCEPTION;
+	    			Log.e(RestService.TAG, "CLIENT_PROTOCOL_EXCEPTION");
+	    			//e.printStackTrace();
+	    		} catch (IOException e) {
+	    			// TODO Auto-generated catch block
+	    			if(e instanceof UnknownHostException)
+	    				statusCode = UNKNOWN_HOST_EXCEPTION;
+	    			else if(e instanceof MalformedURLException)
+	    				statusCode = MALFORMED_URL_EXCEPTION;
+	    			else if(e instanceof UnknownServiceException)
+	    				statusCode = UNKNOWN_SERVICE_EXCEPTION;
+	    			else if(e instanceof ConnectTimeoutException)
+	    				statusCode = CONNECT_TIMEOUT_EXCEPTION;
+	    			else if(e instanceof SocketTimeoutException)
+	    				statusCode = SOCKET_TIMEOUT_EXCEPTION;
+	    			else
+	    				statusCode = IO_EXCEPTION;
+	    			Log.e(RestService.TAG, "IO_EXCEPTION");
+	    			//e.printStackTrace();
+	    		} finally {
+	    			try {
+	    				responseEntity.consumeContent();
+	    			} catch (IOException e) {
+	    				// TODO Auto-generated catch block
+	    				e.printStackTrace();
+	    			}
+	    		}
+	    		if(WebService.FLAG_RESOURCE) {
+	    			request.getResourceRepresentation().setResultCode(statusCode);
+	    			request.getResourceRepresentation().setTransactingFlag(false);
+	    		}
+	    		mProcessorCallback.callAction(statusCode, request, IS);
+	        }
+	    }).start();
 	}
 	
 	public interface ProcessorCallback {
