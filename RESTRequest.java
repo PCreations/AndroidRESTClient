@@ -27,6 +27,7 @@ public class RESTRequest implements Serializable {
 	
 	public RESTRequest(UUID id) {
 		mID = id;
+		mHeaders = new ArrayList<SerializableHeader>();
 	}
 	
 	public RESTRequest(HTTPVerb verb, UUID id, String url) {
@@ -110,9 +111,28 @@ public class RESTRequest implements Serializable {
 		 */
 		private static final long serialVersionUID = -3589739936804187767L;
 		
+		private String mName;
+		private String mValue;
+		
 		public SerializableHeader(String name, String value) {
 			super(name, value);
 			// TODO Auto-generated constructor stub
+		}
+		
+		public void setName(String name) {
+			mName = name;
+		}
+		
+		public void setValue(String value) {
+			mValue = value;
+		}
+		
+		public String getName() {
+			return mName;
+		}
+		
+		public String getValue() {
+			return mValue;
 		}
 		
 	}

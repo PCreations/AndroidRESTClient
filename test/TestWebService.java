@@ -1,5 +1,7 @@
 package com.pcreations.restclient.test;
 
+import java.io.InputStream;
+
 import android.content.Context;
 
 import com.pcreations.restclient.RESTRequest;
@@ -26,5 +28,10 @@ public class TestWebService extends WebService {
 	public void failed(RESTRequest r) {
 		mCurrentResource = new TestResource("failed", 1);
 		get(r, "http://pcreafhdtions.fr/labs/facteo/addresses/get/2.json");
+	}
+	
+	public void addAddress(RESTRequest r) {
+		mCurrentResource = new TestResource("address", 4);
+		post(r, "http://pcreations.fr/labs/facteo/addresses/add.json");
 	}
 }

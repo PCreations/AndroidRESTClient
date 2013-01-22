@@ -1,6 +1,10 @@
 package com.pcreations.restclient;
 
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -69,9 +73,38 @@ public abstract class Processor {
 			case GET:
 				mHttpRequestHandler.get(r);
 				break;
+			case POST:
+				mHttpRequestHandler.post(r, stringToInputStream("{\"Address\":{\"name\":\"18 rue du Ponceau\"}}"));
 		}
 		
 	}
+	
+	private InputStream stringToInputStream(String str) {
+    	// convert String into InputStream
+    	InputStream is = new ByteArrayInputStream(str.getBytes());
+     
+    	// read it with BufferedReader
+    	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+     
+    	String line;
+    	try {
+			while ((line = br.readLine()) != null) {
+				System.out.println(line);
+			}
+			try {
+				br.close();
+				return is;
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	
+    	return null;
+    }
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE

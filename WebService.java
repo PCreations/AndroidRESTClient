@@ -1,5 +1,6 @@
 package com.pcreations.restclient;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -57,6 +58,18 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected void get(RESTRequest r, String uri, Bundle extraParams) {
 		Log.d(RestService.TAG, "WebService.get()");
 		initRequest(r, HTTPVerb.GET, uri, extraParams);
+		try {
+			initAndStartService(r);
+		} catch (CurrentResourceNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	protected void post(RESTRequest r, String string) {
+		//initPostHeaders(r);
+		Log.e(RestService.TAG, "WebService.post("+string+")");
+		initRequest(r, HTTPVerb.POST,  string);
 		try {
 			initAndStartService(r);
 		} catch (CurrentResourceNotInitializedException e) {
