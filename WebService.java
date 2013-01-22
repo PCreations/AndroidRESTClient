@@ -120,6 +120,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 				}
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
 				mContext.stopService(i);
+				Log.w(RestService.TAG, "Requête supprimée ? = " + String.valueOf(mRequestCollection.remove(request)));
 			}
 		}
 	}	
