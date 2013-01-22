@@ -19,13 +19,14 @@ public class MainActivity extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(RestService.TAG, "START");
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
         failedRequest = ws.newRequest();
         testRequest = ws.newRequest();
         ws.test(testRequest);
         ws.failed(failedRequest);
-        //Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
+        Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
     }
     
     public void testRequest(View button) {

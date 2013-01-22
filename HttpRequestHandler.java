@@ -14,7 +14,6 @@ import java.util.UUID;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
-import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
@@ -27,6 +26,9 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.HttpContext;
+import org.apache.http.util.EntityUtils;
 
 import android.util.Log;
 
@@ -79,13 +81,14 @@ public class HttpRequestHandler {
 	
 	private void processRequest(RESTRequest request) {
 		Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
-		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
+		/*HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
 		HttpResponse response = null;
+		HttpEntity responseEntity = null;
 		int statusCode = 0;
 		InputStream IS = null;
 		try {
 			response = currentHttpContainer.execute();
-			HttpEntity responseEntity = response.getEntity();
+			responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
 			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 			IS = responseEntity.getContent();
@@ -110,12 +113,20 @@ public class HttpRequestHandler {
 				statusCode = IO_EXCEPTION;
 			Log.e(RestService.TAG, "IO_EXCEPTION");
 			//e.printStackTrace();
+		} finally {
+			try {
+				responseEntity.consumeContent();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		if(WebService.FLAG_RESOURCE) {
 			request.getResourceRepresentation().setResultCode(statusCode);
 			request.getResourceRepresentation().setTransactingFlag(false);
 		}
-		mProcessorCallback.callAction(statusCode, request, IS);
+		mProcessorCallback.callAction(statusCode, request, IS);*/
+		mProcessorCallback.callAction(0, request, null);
 	}
 	
 	public interface ProcessorCallback {
@@ -128,11 +139,13 @@ public class HttpRequestHandler {
 	
 	private class HTTPContainer {
 		private HttpClient mHttpClient;
+		private HttpContext mHttpContext;
 		private HttpRequestBase mRequest;
 		private HttpParams mHttpParams;
 		
 		public HTTPContainer(HttpRequestBase request, URI uri, List<SerializableHeader> headers) {
 			mHttpParams = new BasicHttpParams();
+			mHttpContext = new BasicHttpContext();
 			HttpConnectionParams.setConnectionTimeout(mHttpParams, TIMEOUT_CONNECTION);
 			HttpConnectionParams.setSoTimeout(mHttpParams, TIMEOUT_SOCKET);
 			mHttpClient = new DefaultHttpClient(mHttpParams);
@@ -140,7 +153,7 @@ public class HttpRequestHandler {
 			mRequest.setURI(uri);
 			setHeaders(mRequest, headers);
 		}
-		
+
 		private void setHeaders(HttpRequestBase httpRequest, List<SerializableHeader> headers) {
 			if(null != headers) {
 				for(Header h : headers) {
@@ -150,7 +163,7 @@ public class HttpRequestHandler {
 		}
 		
 		public HttpResponse execute() throws ClientProtocolException, IOException {
-			return mHttpClient.execute(mRequest);
+			return mHttpClient.execute(mRequest, mHttpContext);
 		}
 	}
 	

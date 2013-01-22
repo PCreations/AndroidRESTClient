@@ -30,7 +30,7 @@ public class RestService extends IntentService{
 		Bundle bundle = intent.getExtras();
 		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
 		mIntentsMap.put(r.getID(), intent);
-		Log.e(TAG, "onHandleIntent() "+ String.valueOf(r.getID()));
+		Log.e(RestService.TAG, "onHandleIntent() "+ String.valueOf(r.getID()));
 		RestService.processor.setRESTServiceCallback(new RESTServiceCallback() {
 
 			@Override
