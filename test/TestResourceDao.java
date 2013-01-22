@@ -2,10 +2,13 @@ package com.pcreations.restclient.test;
 
 import java.sql.SQLException;
 
+import android.util.Log;
+
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.stmt.PreparedQuery;
 import com.j256.ormlite.support.ConnectionSource;
 import com.pcreations.restclient.DaoAccess;
+import com.pcreations.restclient.RestService;
 
 public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implements DaoAccess<TestResource>{
 
@@ -37,9 +40,10 @@ public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implemen
 		PreparedQuery<TestResource> q = queryBuilder().where()
 				.eq(TestResource.NAME_COLUMN, name)
 				.and()
-				.eq(TestResource.ID_COLUMN, resourceId)
+				.eq(TestResource.RESOURCE_ID_COLUMN, resourceId)
 				.prepare();
 		resource = queryForFirst(q);
+		Log.i(RestService.TAG, "findByNameAndId statement = " + q.toString());
 		return resource;
 	}
 

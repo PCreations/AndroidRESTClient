@@ -23,7 +23,7 @@ public class MainActivity extends Activity  {
         ws = new TestWebService(this);
         failedRequest = ws.newRequest();
         testRequest = ws.newRequest();
-        //ws.failed(failedRequest);
+        ws.failed(failedRequest);
         ws.test(testRequest);
         //Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
     }

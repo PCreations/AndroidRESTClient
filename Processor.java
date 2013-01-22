@@ -2,6 +2,7 @@ package com.pcreations.restclient;
 
 import java.io.InputStream;
 import java.sql.SQLException;
+import java.util.List;
 
 import android.util.Log;
 
@@ -95,6 +96,19 @@ public abstract class Processor {
 	}
 
 	public boolean checkRequest(RESTRequest request) {
+		Log.w(RestService.TAG, "Resource = " + request.getResourceRepresentation().toString());
+		Log.e(RestService.TAG, "LISTE RESOURCES = ");
+		List<ResourceRepresentation> resourcesList;
+		try {
+			resourcesList = mResourceDaoGetter.getResourceDao().queryForAll();
+			for(ResourceRepresentation r : resourcesList) {
+				Log.e(RestService.TAG, r.toString());
+			}
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		Log.e(RestService.TAG, "FIN LISTE RESOURCES");
 		try {
 			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findByNameAndId(request.getResourceRepresentation().getName(), request.getResourceRepresentation().getResourceId());
 			if(null != resource) {
