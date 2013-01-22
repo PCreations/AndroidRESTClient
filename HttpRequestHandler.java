@@ -28,7 +28,6 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
-import org.apache.http.util.EntityUtils;
 
 import android.util.Log;
 
@@ -155,18 +154,21 @@ public class HttpRequestHandler {
 			mHttpClient = new DefaultHttpClient(mHttpParams);
 			mRequest = request;
 			mRequest.setURI(uri);
-			setHeaders(mRequest, headers);
+			setHeaders(headers);
 		}
 
-		private void setHeaders(HttpRequestBase httpRequest, List<SerializableHeader> headers) {
+		private void setHeaders(List<SerializableHeader> headers) {
 			if(null != headers) {
 				for(Header h : headers) {
-					httpRequest.addHeader(h);
+					mRequest.addHeader(h);
 				}
 			}
 		}
 		
 		public HttpResponse execute() throws ClientProtocolException, IOException {
+			if(mRequest instanceof HttpGet) {
+				return mHttpClient.execute(mRequest, mHttpContext);
+			}
 			return mHttpClient.execute(mRequest, mHttpContext);
 		}
 	}

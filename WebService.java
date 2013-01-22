@@ -95,6 +95,11 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		}
 	}
 	
+	protected void initPostHeaders(RESTRequest r) {
+		r.getHeaders().add(r.new SerializableHeader("Accept", "application/json"));
+		r.getHeaders().add(r.new SerializableHeader("Content-type", "application/json"));
+	}
+	
 	protected void setCurrentResource(ResourceRepresentation resource) {
 		mCurrentResource = resource;
 	}
