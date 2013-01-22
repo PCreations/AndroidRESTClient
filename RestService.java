@@ -42,7 +42,7 @@ public class RestService extends IntentService{
 	private void handleRESTServiceCallback(int statusCode, RESTRequest r) {
 		Bundle bundle = mIntent.getExtras();
 		ResultReceiver receiver = bundle.getParcelable(RestService.RECEIVER_KEY);
-		Log.e(RestService.TAG, "resource dans handleRESTServiceCallback = " + r.getResourceRepresentation().toString());
+		//Log.e(RestService.TAG, "resource dans handleRESTServiceCallback = " + r.getResourceRepresentation().toString());
 		Bundle resultData = new Bundle();
         resultData.putSerializable(RestService.REQUEST_KEY, r);
         resultData.putParcelable(RestService.INTENT_KEY, mIntent);

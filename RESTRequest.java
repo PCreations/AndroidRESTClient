@@ -98,7 +98,9 @@ public class RESTRequest implements Serializable {
 	}
 	
 	public String toString() {
-		return "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl+", resource = "+mResourceRepresentation.toString();
+		if(WebService.FLAG_RESOURCE)
+			return "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl+", resource = "+mResourceRepresentation.toString();
+		return "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl;
 	}
 	
 	public class SerializableHeader extends BasicHeader implements Serializable {

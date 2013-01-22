@@ -1,6 +1,7 @@
 package com.pcreations.restclient;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.UUID;
 
@@ -16,7 +17,7 @@ import com.pcreations.restclient.exceptions.CurrentResourceNotInitializedExcepti
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public static final boolean FLAG_RESOURCE = true;
+	public static final boolean FLAG_RESOURCE = false;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;
@@ -76,7 +77,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
-		Log.e(RestService.TAG, "get : mRequestCollection.size() = " + String.valueOf(mRequestCollection.size()));
+		Log.i(RestService.TAG, "Init service request id = " + String.valueOf(request.getID()));
 		boolean proceedRequest = true;
 		if(FLAG_RESOURCE) {
 			if(null == mCurrentResource)
@@ -112,8 +113,9 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d(RestService.TAG, "onReceiveResult");
 		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
-		Log.w(RestService.TAG, "dans onReceiveResult" + r.getResourceRepresentation().toString());
-		for(RESTRequest request : mRequestCollection) {
+		//Log.w(RestService.TAG, "dans onReceiveResult" + r.getResourceRepresentation().toString());
+		for(Iterator<RESTRequest> it = mRequestCollection.iterator(); it.hasNext();) {
+			RESTRequest request = it.next();
 			if(request.getID().equals(r.getID())) {
 				if(request.getListener() != null) {
 					request.setResourceRepresentation(r.getResourceRepresentation());
@@ -122,7 +124,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
 				mContext.stopService(i);
 				if(resultCode == 200)
-					mRequestCollection.remove(request);
+					it.remove();
 			}
 		}
 		Log.e(RestService.TAG, "onReceiveResult : mRequestCollection.size() = " + String.valueOf(mRequestCollection.size()));

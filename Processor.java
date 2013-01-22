@@ -75,11 +75,13 @@ public abstract class Processor {
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
 		//GESTION BDD EN FONCTION RESULTAT REQUETE
-		Log.e(RestService.TAG, "resource dans HttpRequestHandlerCallback = " + request.getResourceRepresentation().toString());
+		//Log.e(RestService.TAG, "resource dans HttpRequestHandlerCallback = " + request.getResourceRepresentation().toString());
 		try {
-			mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
-			Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
-			postProcess(request, resultStream);
+			if(WebService.FLAG_RESOURCE) {
+				mResourceDaoGetter.getResourceDao().updateOrCreate(request.getResourceRepresentation());
+				Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
+				postProcess(request, resultStream);
+			}
 			mRESTServiceCallback.callAction(statusCode, request);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

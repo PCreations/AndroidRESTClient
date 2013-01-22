@@ -111,8 +111,10 @@ public class HttpRequestHandler {
 			Log.e(RestService.TAG, "IO_EXCEPTION");
 			//e.printStackTrace();
 		}
-		request.getResourceRepresentation().setResultCode(statusCode);
-		request.getResourceRepresentation().setTransactingFlag(false);
+		if(WebService.FLAG_RESOURCE) {
+			request.getResourceRepresentation().setResultCode(statusCode);
+			request.getResourceRepresentation().setTransactingFlag(false);
+		}
 		mProcessorCallback.callAction(statusCode, request, IS);
 	}
 	

@@ -21,7 +21,7 @@ public class MainActivity extends Activity  {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
-        failedRequest = ws.newRequest();
+        //failedRequest = ws.newRequest();
         testRequest = ws.newRequest();
         //ws.failed(failedRequest);
         ws.test(testRequest);
