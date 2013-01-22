@@ -8,10 +8,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.UnknownHostException;
 import java.net.UnknownServiceException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
@@ -44,24 +47,17 @@ public class HttpRequestHandler {
 	private static final int TIMEOUT_CONNECTION = 10000;
 	private static final int TIMEOUT_SOCKET = 10000;
 	
-	private HttpClient mHttpClient;
-	private HttpRequestBase mRequest;
-	private HttpParams mHttpParams;
 	private ProcessorCallback mProcessorCallback;
+	private HashMap<UUID, HTTPContainer> httpRequests;
 	
 	public HttpRequestHandler() {
-		mHttpParams = new BasicHttpParams();
-		HttpConnectionParams.setConnectionTimeout(mHttpParams, TIMEOUT_CONNECTION);
-		HttpConnectionParams.setSoTimeout(mHttpParams, TIMEOUT_SOCKET);
-		mHttpClient = new DefaultHttpClient(mHttpParams);
+		httpRequests = new HashMap<UUID, HTTPContainer>();
 	}
 	
 	public void get(RESTRequest r) {
-		mRequest = new HttpGet();
-		setHeaders(mRequest, r.getHeaders());
 		Log.d("tag", "Executing GET request: " + r.getUrl());
 		try {
-			mRequest.setURI(new URI(r.getUrl()));
+			httpRequests.put(r.getID(), new HTTPContainer(new HttpGet(), new URI(r.getUrl()), r.getHeaders()));
 			processRequest(r);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
@@ -71,34 +67,24 @@ public class HttpRequestHandler {
 	}
 	
 	public void post(RESTRequest r) {
-		mRequest = new HttpPost(r.getUrl());
-		mRequest.setHeader("Content-Type", "application/json");
 		try {
-			mRequest.setURI(new URI(r.getUrl()));
+			httpRequests.put(r.getID(), new HTTPContainer(new HttpPost(r.getUrl()), new URI(r.getUrl()), r.getHeaders()));
 			processRequest(r);
 		} catch (URISyntaxException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-			
 			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, r, null);
 		}
 	}
 	
-	private void setHeaders(HttpRequestBase httpRequest, List<SerializableHeader> headers) {
-		if(null != headers) {
-			for(Header h : headers) {
-				httpRequest.addHeader(h);
-			}
-		}
-	}
-	
 	private void processRequest(RESTRequest request) {
-		for(int i=0; i<100000; ++i);
+		Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
+		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
 		HttpResponse response = null;
 		int statusCode = 0;
 		InputStream IS = null;
 		try {
-			response = mHttpClient.execute(mRequest);
+			response = currentHttpContainer.execute();
 			HttpEntity responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
 			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
@@ -107,7 +93,7 @@ public class HttpRequestHandler {
 			// TODO Auto-generated catch block
 			statusCode = CLIENT_PROTOCOL_EXCEPTION;
 			Log.e(RestService.TAG, "CLIENT_PROTOCOL_EXCEPTION");
-			e.printStackTrace();
+			//e.printStackTrace();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			if(e instanceof UnknownHostException)
@@ -123,7 +109,7 @@ public class HttpRequestHandler {
 			else
 				statusCode = IO_EXCEPTION;
 			Log.e(RestService.TAG, "IO_EXCEPTION");
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 		request.getResourceRepresentation().setResultCode(statusCode);
 		request.getResourceRepresentation().setTransactingFlag(false);
@@ -136,6 +122,34 @@ public class HttpRequestHandler {
 	
 	public void setProcessorCallback(ProcessorCallback callback) {
 		mProcessorCallback = callback;
+	}
+	
+	private class HTTPContainer {
+		private HttpClient mHttpClient;
+		private HttpRequestBase mRequest;
+		private HttpParams mHttpParams;
+		
+		public HTTPContainer(HttpRequestBase request, URI uri, List<SerializableHeader> headers) {
+			mHttpParams = new BasicHttpParams();
+			HttpConnectionParams.setConnectionTimeout(mHttpParams, TIMEOUT_CONNECTION);
+			HttpConnectionParams.setSoTimeout(mHttpParams, TIMEOUT_SOCKET);
+			mHttpClient = new DefaultHttpClient(mHttpParams);
+			mRequest = request;
+			mRequest.setURI(uri);
+			setHeaders(mRequest, headers);
+		}
+		
+		private void setHeaders(HttpRequestBase httpRequest, List<SerializableHeader> headers) {
+			if(null != headers) {
+				for(Header h : headers) {
+					httpRequest.addHeader(h);
+				}
+			}
+		}
+		
+		public HttpResponse execute() throws ClientProtocolException, IOException {
+			return mHttpClient.execute(mRequest);
+		}
 	}
 	
 }
