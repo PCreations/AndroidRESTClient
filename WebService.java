@@ -44,7 +44,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected abstract void setProcessor();
 	
 	protected void get(RESTRequest r, String uri) {
-		Log.d(RestService.TAG, "WebService.get()");
+		Log.e(RestService.TAG, "WebService.get("+uri+")");
 		initRequest(r, HTTPVerb.GET,  uri);
 		try {
 			initAndStartService(r);

@@ -25,6 +25,6 @@ public class TestWebService extends WebService {
 	
 	public void failed(RESTRequest r) {
 		mCurrentResource = new TestResource("failed", 1);
-		get(r, "http://pcreations.fr/labs/facteo/addresses/get/3.json");
+		get(r, "http://pcreafhdtions.fr/labs/facteo/addresses/get/2.json");
 	}
 }

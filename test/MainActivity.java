@@ -19,13 +19,14 @@ public class MainActivity extends Activity  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.e(RestService.TAG, "START");
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
-        //failedRequest = ws.newRequest();
+        failedRequest = ws.newRequest();
         testRequest = ws.newRequest();
-        //ws.failed(failedRequest);
         ws.test(testRequest);
-        //Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
+        ws.failed(failedRequest);
+        Log.e(RestService.TAG, "chupeeRequestID = " + testRequest.toString());
     }
     
     public void testRequest(View button) {
@@ -46,7 +47,7 @@ public class MainActivity extends Activity  {
 			}
     	});
     	
-    	/*failedRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
+    	failedRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
 
 			@Override
 			public void onFinishedRequest(int resultCode) {
@@ -54,14 +55,14 @@ public class MainActivity extends Activity  {
 				Log.d(RestService.TAG, "FAILED REQUEST resultCode = " + String.valueOf(resultCode));
 				Log.d(RestService.TAG, "FAILED REQUEST terminée : " + failedRequest.toString());
 			}
-    	});*/
+    	});
     	
     }
     
     public void onPause() {
     	super.onPause();
     	testRequest.setOnFinishedRequestListener(null);
-    	//failedRequest.setOnFinishedRequestListener(null);
+    	failedRequest.setOnFinishedRequestListener(null);
     }
     
 }
