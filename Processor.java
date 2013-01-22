@@ -96,7 +96,7 @@ public abstract class Processor {
 
 	public boolean checkRequest(RESTRequest request) {
 		try {
-			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findById(request.getResourceRepresentation().getResourceId());
+			ResourceRepresentation resource = mResourceDaoGetter.getResourceDao().findByNameAndId(request.getResourceRepresentation().getName(), request.getResourceRepresentation().getResourceId());
 			if(null != resource) {
 				Log.w(RestService.TAG, resource.toString());
 				if(!resource.getTransactingFlag()) {

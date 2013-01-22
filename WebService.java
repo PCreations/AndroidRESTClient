@@ -76,6 +76,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
+		Log.e(RestService.TAG, "get : mRequestCollection.size() = " + String.valueOf(mRequestCollection.size()));
 		boolean proceedRequest = true;
 		if(FLAG_RESOURCE) {
 			if(null == mCurrentResource)
@@ -120,8 +121,10 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 				}
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
 				mContext.stopService(i);
-				Log.w(RestService.TAG, "Requête supprimée ? = " + String.valueOf(mRequestCollection.remove(request)));
+				if(resultCode == 200)
+					mRequestCollection.remove(request);
 			}
 		}
-	}	
+		Log.e(RestService.TAG, "onReceiveResult : mRequestCollection.size() = " + String.valueOf(mRequestCollection.size()));
+	}
 }

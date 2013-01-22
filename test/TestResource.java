@@ -15,8 +15,9 @@ public class TestResource implements ResourceRepresentation {
 	private static final long serialVersionUID = 3031641666317099499L;
 
 	public static final String NAME_COLUMN = "name";
+	public static final String ID_COLUMN = "id";
 
-	@DatabaseField(generatedId=true)
+	@DatabaseField(generatedId=true, columnName=ID_COLUMN)
 	private int id;
 	
 	@DatabaseField

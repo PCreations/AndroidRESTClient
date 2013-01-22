@@ -30,5 +30,17 @@ public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implemen
 	public TestResource findById(int resourceId) throws SQLException {
 		return queryForId(resourceId);
 	}
+	
+	@Override
+	public TestResource findByNameAndId(String name, int resourceId) throws SQLException {
+		TestResource resource = null;
+		PreparedQuery<TestResource> q = queryBuilder().where()
+				.eq(TestResource.NAME_COLUMN, name)
+				.and()
+				.eq(TestResource.ID_COLUMN, resourceId)
+				.prepare();
+		resource = queryForFirst(q);
+		return resource;
+	}
 
 }
