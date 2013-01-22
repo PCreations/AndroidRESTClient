@@ -1,14 +1,11 @@
 package com.pcreations.restclient;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.UnknownHostException;
 import java.net.UnknownServiceException;
 import java.util.HashMap;
@@ -17,6 +14,7 @@ import java.util.UUID;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
@@ -57,7 +55,7 @@ public class HttpRequestHandler {
 	}
 	
 	public void get(RESTRequest r) {
-		Log.e(RestService.TAG, "Executing GET request: " + r.getUrl());
+		Log.d("tag", "Executing GET request: " + r.getUrl());
 		try {
 			httpRequests.put(r.getID(), new HTTPContainer(new HttpGet(), new URI(r.getUrl()), r.getHeaders()));
 			processRequest(r);
@@ -80,41 +78,12 @@ public class HttpRequestHandler {
 	}
 	
 	private void processRequest(RESTRequest request) {
-		Log.e(RestService.TAG, "PROCESS REQUEST");
-		URL url;
+		Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
+		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
+		HttpResponse response = null;
 		int statusCode = 0;
-		InputStream in = null;
-		HttpURLConnection urlConnection = null;
+		InputStream IS = null;
 		try {
-			url = new URL(request.getUrl());
-			urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("GET");
-			//urlConnection.setReadTimeout(10000);
-		    in = new BufferedInputStream(urlConnection.getInputStream());
-		    statusCode = urlConnection.getResponseCode();
-		} catch (MalformedURLException e1) {
-			statusCode = MALFORMED_URL_EXCEPTION;
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			if(e instanceof UnknownHostException)
-				statusCode = UNKNOWN_HOST_EXCEPTION;
-			else if(e instanceof MalformedURLException)
-				statusCode = MALFORMED_URL_EXCEPTION;
-			else if(e instanceof UnknownServiceException)
-				statusCode = UNKNOWN_SERVICE_EXCEPTION;
-			else if(e instanceof ConnectTimeoutException)
-				statusCode = CONNECT_TIMEOUT_EXCEPTION;
-			else if(e instanceof SocketTimeoutException)
-				statusCode = SOCKET_TIMEOUT_EXCEPTION;
-			else
-				statusCode = IO_EXCEPTION;
-			Log.e(RestService.TAG, "IO_EXCEPTION");
-			//e.printStackTrace();
-		} finally {
-	    	urlConnection.disconnect();
-	    }
-	    
-		/*try {
 			response = currentHttpContainer.execute();
 			HttpEntity responseEntity = response.getEntity();
 			StatusLine responseStatus = response.getStatusLine();
@@ -141,12 +110,12 @@ public class HttpRequestHandler {
 				statusCode = IO_EXCEPTION;
 			Log.e(RestService.TAG, "IO_EXCEPTION");
 			//e.printStackTrace();
-		}*/
+		}
 		if(WebService.FLAG_RESOURCE) {
 			request.getResourceRepresentation().setResultCode(statusCode);
 			request.getResourceRepresentation().setTransactingFlag(false);
 		}
-		mProcessorCallback.callAction(statusCode, request, in);
+		mProcessorCallback.callAction(statusCode, request, IS);
 	}
 	
 	public interface ProcessorCallback {
