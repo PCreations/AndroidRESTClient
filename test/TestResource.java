@@ -27,6 +27,9 @@ public class TestResource implements ResourceRepresentation<Integer> {
 	private String mName;
 	
 	@DatabaseField
+	private String mContent;
+	
+	@DatabaseField
 	private int mState;
 	
 	@DatabaseField
@@ -100,4 +103,13 @@ public class TestResource implements ResourceRepresentation<Integer> {
 		this.id = id;
 	}
 
+	public String getmContent() {
+		return mContent;
+	}
+
+	public void setmContent(String mContent) {
+		this.mContent = mContent;
+	}
+
+	
 }

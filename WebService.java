@@ -1,6 +1,5 @@
 package com.pcreations.restclient;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +13,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
-import com.pcreations.restclient.exceptions.CurrentResourceNotInitializedException;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
@@ -24,7 +22,6 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected Processor mProcessor;
 	protected OnFinishedRequestListener onFinishedRequestListener;
 	protected List<RESTRequest> mRequestCollection;
-	protected ResourceRepresentation mCurrentResource;
 	
 	public WebService(Context context) {
 		super();
@@ -47,35 +44,21 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected void get(RESTRequest r, String uri) {
 		Log.e(RestService.TAG, "WebService.get("+uri+")");
 		initRequest(r, HTTPVerb.GET,  uri);
-		try {
-			initAndStartService(r);
-		} catch (CurrentResourceNotInitializedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		initAndStartService(r);
 	}
 	
 	protected void get(RESTRequest r, String uri, Bundle extraParams) {
 		Log.d(RestService.TAG, "WebService.get()");
 		initRequest(r, HTTPVerb.GET, uri, extraParams);
-		try {
-			initAndStartService(r);
-		} catch (CurrentResourceNotInitializedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		initAndStartService(r);
 	}
 	
-	protected void post(RESTRequest r, String string) {
+	protected void post(RESTRequest r, String string, ResourceRepresentation<?> resource) {
 		//initPostHeaders(r);
 		Log.e(RestService.TAG, "WebService.post("+string+")");
+		r.setResourceRepresentation(resource);
 		initRequest(r, HTTPVerb.POST,  string);
-		try {
-			initAndStartService(r);
-		} catch (CurrentResourceNotInitializedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		initAndStartService(r);
 	}
 	
 	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri) {
@@ -89,15 +72,11 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		r.setExtraParams(extraParams);
 	}
 	
-	protected void initAndStartService(RESTRequest request) throws CurrentResourceNotInitializedException{
+	protected void initAndStartService(RESTRequest request){
 		Log.i(RestService.TAG, "Init service request id = " + String.valueOf(request.getID()));
 		boolean proceedRequest = true;
-		if(FLAG_RESOURCE) {
-			if(null == mCurrentResource)
-				throw new CurrentResourceNotInitializedException();
-			request.setResourceRepresentation(mCurrentResource);
+		if(FLAG_RESOURCE)
 			proceedRequest = mProcessor.checkRequest(request);
-		}
 		if(proceedRequest) {
 			Intent i = new Intent(mContext, RestService.class);
 			i.setData(Uri.parse(request.getUrl()));
@@ -111,10 +90,6 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected void initPostHeaders(RESTRequest r) {
 		r.getHeaders().add(r.new SerializableHeader("Accept", "application/json"));
 		r.getHeaders().add(r.new SerializableHeader("Content-type", "application/json"));
-	}
-	
-	protected void setCurrentResource(ResourceRepresentation resource) {
-		mCurrentResource = resource;
 	}
 	
 	protected UUID generateID() {

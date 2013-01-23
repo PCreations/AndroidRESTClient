@@ -23,7 +23,7 @@ public class RESTRequest implements Serializable {
 	private String mUrl;
 	private Bundle mExtraParams;
 	private List<SerializableHeader> mHeaders;
-	private ResourceRepresentation mResourceRepresentation;
+	private ResourceRepresentation<?> mResourceRepresentation;
 	
 	public RESTRequest(UUID id) {
 		mID = id;
@@ -85,12 +85,12 @@ public class RESTRequest implements Serializable {
 		this.mVerb = mVerb;
 	}
 	
-	public ResourceRepresentation getResourceRepresentation() {
+	public ResourceRepresentation<?> getResourceRepresentation() {
 		return mResourceRepresentation;
 	}
 
 	public void setResourceRepresentation(
-			ResourceRepresentation mResourceRepresentation) {
+			ResourceRepresentation<?> mResourceRepresentation) {
 		this.mResourceRepresentation = mResourceRepresentation;
 	}
 
