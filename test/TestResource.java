@@ -7,7 +7,7 @@ import com.j256.ormlite.table.DatabaseTable;
 import com.pcreations.restclient.ResourceRepresentation;
 
 @DatabaseTable(tableName = "resources", daoClass=TestResourceDao.class)
-public class TestResource implements ResourceRepresentation {
+public class TestResource implements ResourceRepresentation<Integer> {
 	
 	/**
 	 * 
@@ -57,11 +57,6 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	@Override
-	public String getName() {
-		return mName;
-	}
-
-	@Override
 	public int getState() {
 		return mState;
 	}
@@ -69,11 +64,6 @@ public class TestResource implements ResourceRepresentation {
 	@Override
 	public int getResultCode() {
 		return mResultCode;
-	}
-
-	@Override
-	public void setName(String name) {
-		mName = name;
 	}
 
 	@Override
@@ -91,17 +81,6 @@ public class TestResource implements ResourceRepresentation {
 	}
 
 	@Override
-	public int getResourceId() {
-		return mResourceId;
-	}
-
-	@Override
-	public void setResourceId(int id) {
-		mResourceId = id;
-		
-	}
-
-	@Override
 	public void setTransactingFlag(boolean transacting) {
 		mTransactingFlag = transacting;
 	}
@@ -109,6 +88,16 @@ public class TestResource implements ResourceRepresentation {
 	@Override
 	public boolean getTransactingFlag() {
 		return mTransactingFlag;
+	}
+
+	@Override
+	public Integer getId() {
+		return id;
+	}
+
+	@Override
+	public void setId(Integer id) {
+		this.id = id;
 	}
 
 }

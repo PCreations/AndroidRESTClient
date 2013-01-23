@@ -143,7 +143,6 @@ public class HttpRequestHandler {
 	    		mProcessorCallback.callAction(statusCode, request, IS);
 	        }
 	    }).start();
-		//mProcessorCallback.callAction(0, request, null);
 	}
 	
 	private void processRequest(final RESTRequest request) {
