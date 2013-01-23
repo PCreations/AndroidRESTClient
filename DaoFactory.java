@@ -2,6 +2,6 @@ package com.pcreations.restclient;
 
 abstract public class DaoFactory {
 
-	protected abstract DaoAccess<? extends ResourceRepresentation<?>> getDao(String name);
+	protected abstract <T> DaoAccess<T> getDao(Class<T> clazz, String name);
 	
 }

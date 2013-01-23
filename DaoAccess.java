@@ -3,12 +3,11 @@ package com.pcreations.restclient;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface DaoAccess {
+public interface DaoAccess<T,ID> {
 
-	abstract public void updateOrCreate(ResourceRepresentation<?> resource)throws SQLException;
-	abstract public ResourceRepresentation<?> findByName(String string) throws SQLException;
-	abstract public ResourceRepresentation<?> findById(int resourceId) throws SQLException;
-	abstract public ResourceRepresentation<?> findByNameAndId(String name, int resourceID) throws SQLException;
-	abstract public List<ResourceRepresentation<?>> queryForAll() throws SQLException;
+	abstract public void updateOrCreate(T resource)throws SQLException;
+	abstract public T findByName(String string) throws SQLException;
+	abstract public T findById(ID resourceId) throws SQLException;
+	abstract public List<T> queryForAll() throws SQLException;
 	
 }
