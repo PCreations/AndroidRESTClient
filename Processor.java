@@ -11,6 +11,7 @@ import java.util.List;
 import android.util.Log;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
+import com.pcreations.restclient.exceptions.DaoFactoryNotInitializedException;
 
 public abstract class Processor {
 
@@ -51,7 +52,7 @@ public abstract class Processor {
 						break;
 				}
 				try {
-					mResourceDaoGetter.getResourceDao().updateOrCreate(resource);
+					mDaoFactory.getDao(resource.getName()).updateOrCreate(resource);
 					processRequest(r);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
