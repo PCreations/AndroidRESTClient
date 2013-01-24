@@ -1,5 +1,6 @@
 package com.pcreations.restclient;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -102,7 +103,6 @@ public class HttpRequestHandler {
 	    			StatusLine responseStatus = response.getStatusLine();
 	    			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 	    			IS = responseEntity.getContent();
-	    			Log.i(RestService.TAG, "RESPONSE = " + getContentBody(responseEntity, IS));
 	    		} catch (ClientProtocolException e) {
 	    			// TODO Auto-generated catch block
 	    			statusCode = CLIENT_PROTOCOL_EXCEPTION;
@@ -179,6 +179,11 @@ public class HttpRequestHandler {
 	    			Log.e(RestService.TAG, "IO_EXCEPTION");
 	    			//e.printStackTrace();
 	    		} finally {
+	    			if(WebService.FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET) {
+		    			request.getResourceRepresentation().setResultCode(statusCode);
+		    			request.getResourceRepresentation().setTransactingFlag(false);
+		    		}
+		    		mProcessorCallback.callAction(statusCode, request, IS);
 	    			try {
 	    				if(null != responseEntity)
 	    					responseEntity.consumeContent();
@@ -187,16 +192,11 @@ public class HttpRequestHandler {
 	    				e.printStackTrace();
 	    			}
 	    		}
-	    		if(WebService.FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET) {
-	    			request.getResourceRepresentation().setResultCode(statusCode);
-	    			request.getResourceRepresentation().setTransactingFlag(false);
-	    		}
-	    		mProcessorCallback.callAction(statusCode, request, IS);
 	        }
 	    }).start();
 	}
 	
-	private String getContentBody(HttpEntity entity, InputStream instream) throws UnsupportedEncodingException {
+	/*private String getContentBody(HttpEntity entity, InputStream instream) throws UnsupportedEncodingException {
 		if (instream == null) { return ""; }
 
 		if (entity.getContentLength() > Integer.MAX_VALUE) { throw new IllegalArgumentException(
@@ -272,7 +272,7 @@ public class HttpRequestHandler {
 
 		return charset;
 
-		}
+		}*/
 	
 	public interface ProcessorCallback {
 		abstract public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream);
@@ -329,16 +329,6 @@ public class HttpRequestHandler {
 			return null;
 		}
 		
-		/*private String inputStreamToString(InputStream is) throws IOException {
-			StringBuilder inputStringBuilder = new StringBuilder();
-	        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-	        String line = bufferedReader.readLine();
-	        while(line != null){
-	            inputStringBuilder.append(line);inputStringBuilder.append('\n');
-	            line = bufferedReader.readLine();
-	        }
-	        return inputStringBuilder.toString();
-		}*/
 	}
 	
 }
