@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import android.provider.ContactsContract.CommonDataKinds.Note;
-
-import com.j256.ormlite.dao.ForeignCollection;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
@@ -64,7 +61,7 @@ public class Address implements ResourceRepresentation<Integer> {
 		this.addressName = name;
 	}
 	
-	public void setNotes(ForeignCollection<Note> notes) {
+	public void setNotes(Collection<Note> notes) {
 		this.notes = notes;
 	}
  

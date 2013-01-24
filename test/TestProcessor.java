@@ -28,7 +28,7 @@ public class TestProcessor extends Processor {
 		if(r.getResourceName().equals("Address")) {
 			try {
 				Address a = mAddressParser.parse(resultStream);
-				a.toString();
+				Log.i(RestService.TAG, "ADDRESS = " + a.toString());
 			} catch (ParsingException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
