@@ -21,17 +21,14 @@ public class TestWebService extends WebService {
 	}
 
 	public void test(RESTRequest r) {
-		mCurrentResource = new TestResource("test", 12);
 		get(r, "http://pcreations.fr/labs/facteo/addresses/get/2.json");
 	}
 	
 	public void failed(RESTRequest r) {
-		mCurrentResource = new TestResource("failed", 1);
 		get(r, "http://pcreafhdtions.fr/labs/facteo/addresses/get/2.json");
 	}
 	
 	public void addAddress(RESTRequest r) {
-		mCurrentResource = new TestResource("address", 4);
 		post(r, "http://pcreations.fr/labs/facteo/addresses/add.json");
 	}
 }
