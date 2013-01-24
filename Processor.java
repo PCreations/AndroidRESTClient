@@ -5,6 +5,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -26,7 +27,7 @@ public abstract class Processor {
 
 	abstract public void setDaoFactory();
 	
-	abstract protected void postProcess(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream resultStream);
+	abstract protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream);
 	
 	protected void preRequestProcess(RESTRequest<? extends ResourceRepresentation<?>> r) throws DaoFactoryNotInitializedException {
 		//GESTION BDD
@@ -180,5 +181,5 @@ public abstract class Processor {
 		}
 		return true;
 	}
-	
+
 }

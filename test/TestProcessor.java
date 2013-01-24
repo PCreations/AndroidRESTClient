@@ -1,6 +1,7 @@
 package com.pcreations.restclient.test;
 
 import java.io.InputStream;
+import java.lang.reflect.ParameterizedType;
 
 import android.util.Log;
 
@@ -19,9 +20,9 @@ public class TestProcessor extends Processor {
 	}
 	
 	@Override
-	protected void postProcess(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream resultStream) {
-		Log.i(RestService.TAG, "postProcess start");
-		if(r.getResourceRepresentation().getClass().equals("Address")) {
+	protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream) {
+		Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
+		/*if(r.getResourceClass().getName().equals("Address")) {
 			try {
 				Address a = mAddressParser.parse(resultStream);
 				a.toString();
@@ -29,7 +30,7 @@ public class TestProcessor extends Processor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
+		}*/
 		Log.i(RestService.TAG, "postProcess end");
 	}
 

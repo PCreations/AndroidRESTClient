@@ -22,17 +22,11 @@ public class RESTRequest<T extends ResourceRepresentation<?>> implements Seriali
 	private Bundle mExtraParams;
 	private List<SerializableHeader> mHeaders;
 	private T mResourceRepresentation;
+	private String mResourceName; 
 	
-	public RESTRequest(UUID id) {
+	public RESTRequest(UUID id, Class<T> clazz) {
 		mID = id;
-		mHeaders = new ArrayList<SerializableHeader>();
-	}
-	
-	public RESTRequest(HTTPVerb verb, UUID id, String url) {
-		super();
-		mVerb = verb;
-		mID = id;
-		mUrl = url;
+		mResourceName = clazz.getSimpleName();
 		mHeaders = new ArrayList<SerializableHeader>();
 	}
 	
@@ -85,6 +79,10 @@ public class RESTRequest<T extends ResourceRepresentation<?>> implements Seriali
 	
 	public T getResourceRepresentation() {
 		return mResourceRepresentation;
+	}
+	
+	public String getResourceName() {
+		return mResourceName;
 	}
 
 	@SuppressWarnings("unchecked")

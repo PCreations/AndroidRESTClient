@@ -34,7 +34,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	}
 	
 	public <T extends ResourceRepresentation<?>> RESTRequest<T> newRequest(Class<T> clazz) {
-		RESTRequest<T> r = new RESTRequest<T>(generateID());
+		RESTRequest<T> r = new RESTRequest<T>(generateID(), clazz);
 		mRequestCollection.add(r);
 		return r;
 	}
