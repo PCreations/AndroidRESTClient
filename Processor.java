@@ -5,7 +5,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.ParameterizedType;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -120,8 +119,11 @@ public abstract class Processor {
 	
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream) {
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback start");
+		postProcess(request, resultStream);
+		//TODO setup StrategyProcess to decide what to do here
+		//By default store object
 		try {
-			if(WebService.FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET) {
+			if(WebService.FLAG_RESOURCE && request.getResourceRepresentation() != null) {
 				ResourceRepresentation<?> resource = request.getResourceRepresentation();
 				DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(resource.getClass());
 				dao.updateOrCreate(request.getResourceRepresentation());
@@ -132,7 +134,6 @@ public abstract class Processor {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		postProcess(request, resultStream);
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback end");
 	}
 	

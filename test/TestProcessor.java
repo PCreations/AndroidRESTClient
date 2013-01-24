@@ -7,6 +7,7 @@ import java.io.InputStreamReader;
 
 import android.util.Log;
 
+import com.pcreations.restclient.HTTPVerb;
 import com.pcreations.restclient.Processor;
 import com.pcreations.restclient.RESTRequest;
 import com.pcreations.restclient.ResourceRepresentation;
@@ -24,17 +25,20 @@ public class TestProcessor extends Processor {
 	@Override
 	protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream) {
 		//resultStream.
-		Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
-		if(r.getResourceName().equals("Address")) {
-			try {
-				Address a = mAddressParser.parse(resultStream);
-				Log.i(RestService.TAG, "ADDRESS = " + a.toString());
-			} catch (ParsingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+		if(r.getVerb() == HTTPVerb.GET) {
+			Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
+			if(r.getResourceName().equals("Address")) {
+				try {
+					Address a = mAddressParser.parse(resultStream);
+					r.setResourceRepresentation(a);
+					Log.i(RestService.TAG, "ADDRESS = " + a.toString());
+				} catch (ParsingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
+			Log.i(RestService.TAG, "postProcess end");
 		}
-		Log.i(RestService.TAG, "postProcess end");
 	}
 
 	@Override
@@ -43,7 +47,7 @@ public class TestProcessor extends Processor {
 		mDaoFactory = new ORMLiteDaoFactory();
 	}
 	
-	private String inputStreamToString(InputStream is) throws IOException {
+	/*private String inputStreamToString(InputStream is) throws IOException {
 		StringBuilder inputStringBuilder = new StringBuilder();
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
         String line = bufferedReader.readLine();
@@ -52,7 +56,7 @@ public class TestProcessor extends Processor {
             line = bufferedReader.readLine();
         }
         return inputStringBuilder.toString();
-	}
+	}*/
 	
 
 }

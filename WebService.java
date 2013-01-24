@@ -16,7 +16,7 @@ import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public static final boolean FLAG_RESOURCE = false;
+	public static final boolean FLAG_RESOURCE = true;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;

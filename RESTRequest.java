@@ -7,8 +7,6 @@ import java.util.UUID;
 
 import android.os.Bundle;
 
-enum HTTPVerb { GET, POST, PUT, DELETE };
-
 public class RESTRequest<T extends ResourceRepresentation<?>> implements Serializable {
 	
 	/**
