@@ -18,6 +18,7 @@ public class ORMLiteDaoFactory extends DaoFactory{
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected <D extends DaoAccess<T>, T extends ResourceRepresentation<?>> D getDao(
 			Class<T> clazz) {

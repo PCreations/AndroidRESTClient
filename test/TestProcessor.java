@@ -9,18 +9,13 @@ import com.pcreations.restclient.exceptions.DatabaseManagerNotInitializedExcepti
 public class TestProcessor extends Processor {
 
 	@Override
-	public void setResourceDaoGetter() {
-		// TODO Auto-generated method stub
-		try {
-			mResourceDaoGetter = DatabaseManager.getInstance().getHelper();
-		} catch (DatabaseManagerNotInitializedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+	protected void postProcess(RESTRequest r, InputStream resultStream) {}
 
 	@Override
-	protected void postProcess(RESTRequest r, InputStream resultStream) {}
+	public void setDaoFactory() {
+		// TODO Auto-generated method stub
+		mDaoFactory = new ORMLiteDaoFactory();
+	}
 	
 
 }

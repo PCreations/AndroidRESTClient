@@ -4,12 +4,10 @@ import java.io.Serializable;
 
 public interface ResourceRepresentation<ID> extends Serializable {
 	
-	abstract public String getName();
 	abstract public ID getId();
 	abstract public int getState();
 	abstract public int getResultCode();
 	abstract public boolean getTransactingFlag();
-	abstract public void setName(String name);
 	abstract public void setId(ID id);
 	abstract public void setState(int stateRetrieving);
 	abstract public void setTransactingFlag(boolean transacting);

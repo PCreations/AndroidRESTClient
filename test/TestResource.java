@@ -110,6 +110,5 @@ public class TestResource implements ResourceRepresentation<Integer> {
 	public void setmContent(String mContent) {
 		this.mContent = mContent;
 	}
-
 	
 }
