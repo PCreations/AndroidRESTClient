@@ -21,7 +21,7 @@ public class AddressParser extends AbstractParser<Address>{
 			//e.printStackTrace();
 			setResultCode(PARSER_KO_JSON_OBJETS_INVALID);
 		} catch (IOException e) {
-			//e.printStackTrace();
+			e.printStackTrace();
 			setResultCode(PARSER_KO);
 		}
 

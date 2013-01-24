@@ -22,7 +22,7 @@ public class TestProcessor extends Processor {
 	@Override
 	protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream) {
 		Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
-		/*if(r.getResourceClass().getName().equals("Address")) {
+		if(r.getResourceName().equals("Address")) {
 			try {
 				Address a = mAddressParser.parse(resultStream);
 				a.toString();
@@ -30,7 +30,7 @@ public class TestProcessor extends Processor {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}*/
+		}
 		Log.i(RestService.TAG, "postProcess end");
 	}
 
