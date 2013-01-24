@@ -23,7 +23,7 @@ public class Address implements ResourceRepresentation<Integer> {
 	@DatabaseField
 	private String addressName;
 
-	@ForeignCollectionField(eager = false)
+	@ForeignCollectionField(eager = true)
 	private Collection<Note> notes = null;
 	
 	@DatabaseField

@@ -30,6 +30,7 @@ public class TestProcessor extends Processor {
 			if(r.getResourceName().equals("Address")) {
 				try {
 					Address a = mAddressParser.parse(resultStream);
+					//TODO SAVE ADDRESS AND SAVE NOTE WITH SETADDRESS
 					r.setResourceRepresentation(a);
 					Log.i(RestService.TAG, "ADDRESS = " + a.toString());
 				} catch (ParsingException e) {

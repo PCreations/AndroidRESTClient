@@ -1,8 +1,11 @@
 package com.pcreations.restclient.test;
 
+import android.util.Log;
+
 import com.pcreations.restclient.DaoAccess;
 import com.pcreations.restclient.DaoFactory;
 import com.pcreations.restclient.ResourceRepresentation;
+import com.pcreations.restclient.RestService;
 import com.pcreations.restclient.exceptions.DatabaseManagerNotInitializedException;
 
 public class ORMLiteDaoFactory extends DaoFactory{
@@ -22,10 +25,11 @@ public class ORMLiteDaoFactory extends DaoFactory{
 	@Override
 	protected <D extends DaoAccess<T>, T extends ResourceRepresentation<?>> D getDao(
 			Class<T> clazz) {
-		if(clazz.getName().equals("Address")) {
+		Log.i(RestService.TAG, "getDao OF : " + clazz.getSimpleName());
+		if(clazz.getSimpleName().equals("Address")) {
 			return (D) mHelper.getAddressDao();
 		}
-		if(clazz.getName().equals("Note")) {
+		if(clazz.getSimpleName().equals("Note")) {
 			return (D) mHelper.getNoteDao();
 		}
 		return null;

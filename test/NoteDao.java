@@ -14,8 +14,7 @@ public class NoteDao extends BaseDaoImpl<Note, Integer> implements DaoAccess<Not
 
 	@Override
 	public void updateOrCreate(Note resource) throws SQLException {
-		// TODO Auto-generated method stub
-		updateOrCreate(resource);
+		createOrUpdate(resource);
 	}
 
 	@Override

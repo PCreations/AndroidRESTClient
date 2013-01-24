@@ -16,8 +16,7 @@ public class AddressDao extends BaseDaoImpl<Address, Integer> implements DaoAcce
 
 	@Override
 	public void updateOrCreate(Address resource) throws SQLException {
-		// TODO Auto-generated method stub
-		updateOrCreate(resource);
+		createOrUpdate(resource);
 	}
 
 	@Override
