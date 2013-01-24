@@ -22,8 +22,11 @@ public class ORMLiteDaoFactory extends DaoFactory{
 	@Override
 	protected <D extends DaoAccess<T>, T extends ResourceRepresentation<?>> D getDao(
 			Class<T> clazz) {
-		if(clazz.getName().equals("TestResource")) {
-			return (D) mHelper.getResourceDao();
+		if(clazz.getName().equals("Address")) {
+			return (D) mHelper.getAddressDao();
+		}
+		if(clazz.getName().equals("Note")) {
+			return (D) mHelper.getNoteDao();
 		}
 		return null;
 	}
