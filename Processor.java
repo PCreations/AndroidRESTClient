@@ -25,9 +25,10 @@ public abstract class Processor {
 	}
 
 	abstract public void setDaoFactory();
-	abstract protected void postProcess(RESTRequest r, InputStream resultStream);
 	
-	protected void preRequestProcess(RESTRequest r) throws DaoFactoryNotInitializedException {
+	abstract protected void postProcess(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream resultStream);
+	
+	protected void preRequestProcess(RESTRequest<? extends ResourceRepresentation<?>> r) throws DaoFactoryNotInitializedException {
 		//GESTION BDD
 		Log.i(RestService.TAG, "preRequestProcess start");
 		if(WebService.FLAG_RESOURCE && r.getVerb() != HTTPVerb.GET) {
@@ -67,12 +68,12 @@ public abstract class Processor {
 		Log.i(RestService.TAG, "preRequestProcess end");
 	}
 	
-	protected void processRequest(RESTRequest r) {
+	protected void processRequest(RESTRequest<? extends ResourceRepresentation<?>> r) {
 		Log.i(RestService.TAG, "processRequest start");
 		mHttpRequestHandler.setProcessorCallback(new ProcessorCallback() {
 
 			@Override
-			public void callAction(int statusCode, RESTRequest request, InputStream resultStream) {
+			public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream) {
 				// TODO Auto-generated method stub
 				handleHttpRequestHandlerCallback(statusCode, request, resultStream);
 			}
@@ -116,11 +117,12 @@ public abstract class Processor {
     	return null;
     }
 	
-	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest request, InputStream resultStream) {
+	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream) {
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback start");
 		try {
 			if(WebService.FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET) {
-				DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(request.getResourceRepresentation().getClass());;
+				ResourceRepresentation<?> resource = request.getResourceRepresentation();
+				DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(resource.getClass());
 				dao.updateOrCreate(request.getResourceRepresentation());
 				Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
 			}
@@ -138,13 +140,14 @@ public abstract class Processor {
 	}
 	
 	public interface RESTServiceCallback {
-		abstract public void callAction(int statusCode, RESTRequest r);
+		abstract public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> r);
 	}
 
-	public boolean checkRequest(RESTRequest request) {
+	public boolean checkRequest(RESTRequest<? extends ResourceRepresentation<?>> request) {
 		Log.e(RestService.TAG, "LISTE RESOURCES = ");
 		List<ResourceRepresentation<?>> resourcesList;
-		DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(request.getResourceRepresentation().getClass());
+		ResourceRepresentation<?> requestResource = request.getResourceRepresentation();
+		DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(requestResource.getClass());
 		try {
 			resourcesList = dao.queryForAll();
 			for(ResourceRepresentation<?> r : resourcesList) {

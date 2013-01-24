@@ -6,8 +6,8 @@ import android.util.Log;
 
 import com.pcreations.restclient.Processor;
 import com.pcreations.restclient.RESTRequest;
+import com.pcreations.restclient.ResourceRepresentation;
 import com.pcreations.restclient.RestService;
-import com.pcreations.restclient.exceptions.DatabaseManagerNotInitializedException;
 
 public class TestProcessor extends Processor {
 
@@ -19,7 +19,7 @@ public class TestProcessor extends Processor {
 	}
 	
 	@Override
-	protected void postProcess(RESTRequest r, InputStream resultStream) {
+	protected void postProcess(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream resultStream) {
 		Log.i(RestService.TAG, "postProcess start");
 		if(r.getResourceRepresentation().getClass().equals("Address")) {
 			try {

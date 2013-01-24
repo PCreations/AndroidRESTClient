@@ -16,12 +16,12 @@ import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public static final boolean FLAG_RESOURCE = true;
+	public static final boolean FLAG_RESOURCE = false;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;
 	protected OnFinishedRequestListener onFinishedRequestListener;
-	protected List<RESTRequest> mRequestCollection;
+	protected List<RESTRequest<?>> mRequestCollection;
 	
 	public WebService(Context context) {
 		super();
@@ -30,30 +30,30 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		RestService.setProcessor(mProcessor);
 		mReceiver = new RestResultReceiver(new Handler());
         mReceiver.setReceiver(this);
-        mRequestCollection = new ArrayList<RESTRequest>();
+        mRequestCollection = new ArrayList<RESTRequest<?>>();
 	}
 	
-	public RESTRequest newRequest() {
-		RESTRequest r = new RESTRequest(generateID());
+	public <T extends ResourceRepresentation<?>> RESTRequest<T> newRequest(Class<T> clazz) {
+		RESTRequest<T> r = new RESTRequest<T>(generateID());
 		mRequestCollection.add(r);
 		return r;
 	}
 	
 	protected abstract void setProcessor();
 	
-	protected void get(RESTRequest r, String uri) {
+	protected void get(RESTRequest<?> r, String uri) {
 		Log.e(RestService.TAG, "WebService.get("+uri+")");
 		initRequest(r, HTTPVerb.GET,  uri);
 		initAndStartService(r);
 	}
 	
-	protected void get(RESTRequest r, String uri, Bundle extraParams) {
+	protected void get(RESTRequest<?> r, String uri, Bundle extraParams) {
 		Log.d(RestService.TAG, "WebService.get()");
 		initRequest(r, HTTPVerb.GET, uri, extraParams);
 		initAndStartService(r);
 	}
 	
-	protected void post(RESTRequest r, String string, ResourceRepresentation<?> resource) {
+	protected void post(RESTRequest<?> r, String string, ResourceRepresentation<?> resource) {
 		//initPostHeaders(r);
 		Log.e(RestService.TAG, "WebService.post("+string+")");
 		r.setResourceRepresentation(resource);
@@ -61,18 +61,18 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		initAndStartService(r);
 	}
 	
-	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri) {
+	protected void initRequest(RESTRequest<?> r, HTTPVerb verb, String uri) {
 		r.setVerb(verb);
 		r.setUrl(uri);
 	}
 	
-	protected void initRequest(RESTRequest r, HTTPVerb verb, String uri, Bundle extraParams) {
+	protected void initRequest(RESTRequest<?> r, HTTPVerb verb, String uri, Bundle extraParams) {
 		r.setVerb(verb);
 		r.setUrl(uri);
 		r.setExtraParams(extraParams);
 	}
 	
-	protected void initAndStartService(RESTRequest request){
+	protected void initAndStartService(RESTRequest<?> request){
 		Log.i(RestService.TAG, "Init service request id = " + String.valueOf(request.getID()));
 		boolean proceedRequest = true;
 		if(FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET)
@@ -87,9 +87,10 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		}
 	}
 	
-	protected void initPostHeaders(RESTRequest r) {
-		r.getHeaders().add(r.new SerializableHeader("Accept", "application/json"));
-		r.getHeaders().add(r.new SerializableHeader("Content-type", "application/json"));
+	protected void initPostHeaders(RESTRequest<?> r) {
+		//TODO Make clean header class
+		/*r.getHeaders().add(r.new SerializableHeader("Accept", "application/json"));
+		r.getHeaders().add(r.new SerializableHeader("Content-type", "application/json"));*/
 	}
 	
 	protected UUID generateID() {
@@ -105,10 +106,10 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	@Override
 	public void onReceiveResult(int resultCode, Bundle resultData) {
 		Log.d(RestService.TAG, "onReceiveResult");
-		RESTRequest r = (RESTRequest) resultData.getSerializable(RestService.REQUEST_KEY);
+		RESTRequest<?> r = (RESTRequest<?>) resultData.getSerializable(RestService.REQUEST_KEY);
 		//Log.w(RestService.TAG, "dans onReceiveResult" + r.getResourceRepresentation().toString());
-		for(Iterator<RESTRequest> it = mRequestCollection.iterator(); it.hasNext();) {
-			RESTRequest request = it.next();
+		for(Iterator<RESTRequest<?>> it = mRequestCollection.iterator(); it.hasNext();) {
+			RESTRequest<?> request = it.next();
 			if(request.getID().equals(r.getID())) {
 				if(request.getListener() != null) {
 					request.setResourceRepresentation(r.getResourceRepresentation());

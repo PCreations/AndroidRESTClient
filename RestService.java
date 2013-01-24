@@ -29,13 +29,14 @@ public class RestService extends IntentService{
 	@Override
 	protected void onHandleIntent(Intent intent){
 		Bundle bundle = intent.getExtras();
-		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
+		@SuppressWarnings("unchecked")
+		RESTRequest<? extends ResourceRepresentation<?>> r = (RESTRequest<? extends ResourceRepresentation<?>>) bundle.getSerializable(RestService.REQUEST_KEY);
 		mIntentsMap.put(r.getID(), intent);
 		Log.e(RestService.TAG, "onHandleIntent() "+ String.valueOf(r.getID()));
 		RestService.processor.setRESTServiceCallback(new RESTServiceCallback() {
 
 			@Override
-			public void callAction(int statusCode, RESTRequest r) {
+			public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> r) {
 				// TODO Auto-generated method stub
 				handleRESTServiceCallback(statusCode, r);
 			}
@@ -49,7 +50,7 @@ public class RestService extends IntentService{
 		}
 	}
 	
-	private void handleRESTServiceCallback(int statusCode, RESTRequest r) {
+	private void handleRESTServiceCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> r) {
 		Intent currentIntent = mIntentsMap.get(r.getID());
 		Bundle bundle = currentIntent.getExtras();
 		ResultReceiver receiver = bundle.getParcelable(RestService.RECEIVER_KEY);

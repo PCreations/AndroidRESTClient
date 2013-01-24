@@ -1,6 +1,5 @@
 package com.pcreations.restclient;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -41,8 +40,6 @@ import org.apache.http.protocol.HttpContext;
 import android.net.ParseException;
 import android.util.Log;
 
-import com.pcreations.restclient.RESTRequest.SerializableHeader;
-
 public class HttpRequestHandler {
 
 	public static final String STATUS_CODE_KEY = "com.pcreations.restclient.HttpRequestHandler.STATUS_CODE";
@@ -65,7 +62,7 @@ public class HttpRequestHandler {
 		httpRequests = new HashMap<UUID, HTTPContainer>();
 	}
 	
-	public void get(RESTRequest r) {
+	public void get(RESTRequest<? extends ResourceRepresentation<?>> r) {
 		Log.d("tag", "Executing GET request: " + r.getUrl());
 		try {
 			httpRequests.put(r.getID(), new HTTPContainer(new HttpGet(), new URI(r.getUrl()), r.getHeaders()));
@@ -77,7 +74,7 @@ public class HttpRequestHandler {
 		}
 	}
 	
-	public void post(RESTRequest r, InputStream holder) {
+	public void post(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream holder) {
 		try {
 			httpRequests.put(r.getID(), new HTTPContainer(new HttpPost(r.getUrl()), new URI(r.getUrl()), r.getHeaders()));
 			processRequest(r, holder);
@@ -88,7 +85,7 @@ public class HttpRequestHandler {
 		}
 	}
 	
-	private void processRequest(final RESTRequest request, final InputStream holder) {
+	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request, final InputStream holder) {
 		Log.i(RestService.TAG, "Holder");
 		Log.i(RestService.TAG, holder.toString());
 		new Thread(new Runnable() {
@@ -145,7 +142,7 @@ public class HttpRequestHandler {
 	    }).start();
 	}
 	
-	private void processRequest(final RESTRequest request) {
+	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request) {
 		new Thread(new Runnable() {
 	        public void run() {
 	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
@@ -278,7 +275,7 @@ public class HttpRequestHandler {
 		}
 	
 	public interface ProcessorCallback {
-		abstract public void callAction(int statusCode, RESTRequest request, InputStream resultStream);
+		abstract public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream);
 	}
 	
 	public void setProcessorCallback(ProcessorCallback callback) {
@@ -332,7 +329,7 @@ public class HttpRequestHandler {
 			return null;
 		}
 		
-		private String inputStreamToString(InputStream is) throws IOException {
+		/*private String inputStreamToString(InputStream is) throws IOException {
 			StringBuilder inputStringBuilder = new StringBuilder();
 	        BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
 	        String line = bufferedReader.readLine();
@@ -341,7 +338,7 @@ public class HttpRequestHandler {
 	            line = bufferedReader.readLine();
 	        }
 	        return inputStringBuilder.toString();
-		}
+		}*/
 	}
 	
 }

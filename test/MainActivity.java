@@ -13,7 +13,7 @@ import com.pcreations.restclient.RestService;
 public class MainActivity extends Activity  {
 
 	private TestWebService ws;
-	private RESTRequest getAddress;
+	private RESTRequest<Address> getAddress;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,7 +21,7 @@ public class MainActivity extends Activity  {
         Log.e(RestService.TAG, "START");
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
-        getAddress = ws.newRequest();
+        getAddress = ws.newRequest(Address.class);
         ws.getAddress(getAddress);
         Log.e(RestService.TAG, "chupeeRequestID = " + getAddress.toString());
     }
