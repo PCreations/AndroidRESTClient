@@ -26,25 +26,13 @@ public class TestResourceDao extends BaseDaoImpl<TestResource, Integer> implemen
 
 	@Override
 	public void updateOrCreate(TestResource resource) throws SQLException {
-		createOrUpdate(resource);
+		// TODO Auto-generated method stub
+		
 	}
 
 	@Override
-	public TestResource findById(int resourceId) throws SQLException {
-		return queryForId(resourceId);
-	}
-	
-	@Override
-	public TestResource findByNameAndId(String name, int resourceId) throws SQLException {
-		TestResource resource = null;
-		PreparedQuery<TestResource> q = queryBuilder().where()
-				.eq(TestResource.NAME_COLUMN, name)
-				.and()
-				.eq(TestResource.RESOURCE_ID_COLUMN, resourceId)
-				.prepare();
-		resource = queryForFirst(q);
-		Log.i(RestService.TAG, "findByNameAndId statement = " + q.toString());
-		return resource;
+	public <ID> TestResource findById(ID resourceId) throws SQLException {
+		return queryForId((Integer) resourceId);
 	}
 
 }

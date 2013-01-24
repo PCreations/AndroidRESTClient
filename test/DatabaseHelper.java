@@ -11,17 +11,16 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.pcreations.restclient.DaoAccess;
-import com.pcreations.restclient.ResourceDaoGetter;
 import com.pcreations.restclient.ResourceRepresentation;
 
 
-public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceDaoGetter<ResourceRepresentation> {
+public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	private static final String DATABASE_NAME = "testDB.db";
 	// Si on change la version la base doit se mettre à jour et réinstalle toutes les tables. Cela permet de ne pas avoir à effacer les données manuellement sur le téléphone
 	private static final int DATABASE_VERSION = 83;
 	// DAO pour l'objet Personne - la clé dans la base est un int donc on met Integer en second
-	private DaoAccess<ResourceRepresentation> testResourceDao = null;
+	private DaoAccess<ResourceRepresentation<Integer>> testResourceDao = null;
 	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -55,8 +54,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceD
 		}
 	}
 
-	@Override
-	public DaoAccess<ResourceRepresentation> getResourceDao() {
+	public DaoAccess<ResourceRepresentation<Integer>> getResourceDao() {
 		if(null == testResourceDao) {
 			try {
 				testResourceDao = DaoManager.createDao(getConnectionSource(), TestResource.class);

@@ -3,8 +3,6 @@ package com.pcreations.restclient.test;
 import android.content.Context;
 import android.util.Log;
 
-import com.pcreations.restclient.ResourceDaoGetter;
-import com.pcreations.restclient.ResourceRepresentation;
 import com.pcreations.restclient.RestService;
 import com.pcreations.restclient.exceptions.DatabaseManagerNotInitializedException;
 
@@ -26,13 +24,13 @@ public class DatabaseManager {
 		return instance;
 	}
  
-	private ResourceDaoGetter<ResourceRepresentation> helper;
+	private DatabaseHelper helper;
  
 	private DatabaseManager(Context context) {
 		helper = new DatabaseHelper(context);
 	}
  
-	public ResourceDaoGetter<ResourceRepresentation> getHelper() {
+	public DatabaseHelper getHelper() {
 		return helper;
 	}
 }

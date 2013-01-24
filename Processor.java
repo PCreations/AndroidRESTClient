@@ -52,7 +52,8 @@ public abstract class Processor {
 						break;
 				}
 				try {
-					mDaoFactory.getDao(resource.getName()).updateOrCreate(resource);
+					DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(resource.getClass());
+					dao.updateOrCreate(resource);
 					processRequest(r);
 				} catch (SQLException e) {
 					// TODO Auto-generated catch block
@@ -117,7 +118,8 @@ public abstract class Processor {
 		//Log.e(RestService.TAG, "resource dans HttpRequestHandlerCallback = " + request.getResourceRepresentation().toString());
 		try {
 			if(WebService.FLAG_RESOURCE) {
-				mDaoFactory.getDao(request.getResourceRepresentation().getName()).updateOrCreate(request.getResourceRepresentation());
+				DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(request.getResourceRepresentation().getClass());;
+				dao.updateOrCreate(request.getResourceRepresentation());
 				Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
 				postProcess(request, resultStream);
 			}
@@ -136,14 +138,14 @@ public abstract class Processor {
 		abstract public void callAction(int statusCode, RESTRequest r);
 	}
 
-	public <T> boolean checkRequest(Class<T> clazz, RESTRequest request) {
+	public boolean checkRequest(RESTRequest request) {
 		Log.w(RestService.TAG, "Resource = " + request.getResourceRepresentation().toString());
 		Log.e(RestService.TAG, "LISTE RESOURCES = ");
-		List<ResourceRepresentation<T>> resourcesList;
+		List<ResourceRepresentation<?>> resourcesList;
+		DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(request.getResourceRepresentation().getClass());
 		try {
-			DaoAccess<T> dao = mDaoFactory.getDao(clazz, request.getResourceRepresentation().getName());
 			resourcesList = dao.queryForAll();
-			for(ResourceRepresentation<T> r : resourcesList) {
+			for(ResourceRepresentation<?> r : resourcesList) {
 				Log.e(RestService.TAG, r.toString());
 			}
 		} catch (SQLException e1) {
@@ -152,7 +154,7 @@ public abstract class Processor {
 		}
 		Log.e(RestService.TAG, "FIN LISTE RESOURCES");
 		try {
-			ResourceRepresentation<?> resource = mDaoFactory.getDao(clazz, request.getResourceRepresentation().getName()).findById(request.getResourceRepresentation().getId());
+			ResourceRepresentation<?> resource = dao.findById(request.getResourceRepresentation().getId());
 			if(null != resource) {
 				Log.w(RestService.TAG, resource.toString());
 				if(!resource.getTransactingFlag()) {
