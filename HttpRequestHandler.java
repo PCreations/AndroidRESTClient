@@ -190,7 +190,7 @@ public class HttpRequestHandler {
 	    				e.printStackTrace();
 	    			}
 	    		}
-	    		if(WebService.FLAG_RESOURCE) {
+	    		if(WebService.FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET) {
 	    			request.getResourceRepresentation().setResultCode(statusCode);
 	    			request.getResourceRepresentation().setTransactingFlag(false);
 	    		}

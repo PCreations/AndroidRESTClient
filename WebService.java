@@ -16,7 +16,7 @@ import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
 
 public abstract class WebService implements RestResultReceiver.Receiver{
 
-	public static final boolean FLAG_RESOURCE = false;
+	public static final boolean FLAG_RESOURCE = true;
 	protected RestResultReceiver mReceiver;
 	protected Context mContext;
 	protected Processor mProcessor;
@@ -75,7 +75,7 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 	protected void initAndStartService(RESTRequest request){
 		Log.i(RestService.TAG, "Init service request id = " + String.valueOf(request.getID()));
 		boolean proceedRequest = true;
-		if(FLAG_RESOURCE)
+		if(FLAG_RESOURCE && request.getVerb() != HTTPVerb.GET)
 			proceedRequest = mProcessor.checkRequest(request);
 		if(proceedRequest) {
 			Intent i = new Intent(mContext, RestService.class);

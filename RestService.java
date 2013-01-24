@@ -10,6 +10,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.pcreations.restclient.Processor.RESTServiceCallback;
+import com.pcreations.restclient.exceptions.DaoFactoryNotInitializedException;
 
 public class RestService extends IntentService{
 	
@@ -40,7 +41,12 @@ public class RestService extends IntentService{
 			}
      
         });
-        RestService.processor.preRequestProcess(r);
+        try {
+			RestService.processor.preRequestProcess(r);
+		} catch (DaoFactoryNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	private void handleRESTServiceCallback(int statusCode, RESTRequest r) {
@@ -51,6 +57,7 @@ public class RestService extends IntentService{
 		Bundle resultData = new Bundle();
         resultData.putSerializable(RestService.REQUEST_KEY, r);
         resultData.putParcelable(RestService.INTENT_KEY, currentIntent);
+        Log.i(RestService.TAG, "send");
         receiver.send(statusCode, resultData);
 	}
 	

@@ -1,7 +1,5 @@
 package com.pcreations.restclient.test;
 
-import java.io.InputStream;
-
 import android.content.Context;
 
 import com.pcreations.restclient.RESTRequest;
@@ -20,7 +18,7 @@ public class TestWebService extends WebService {
 		mProcessor = new TestProcessor();
 	}
 
-	public void test(RESTRequest r) {
+	public void getAddress(RESTRequest r) {
 		get(r, "http://pcreations.fr/labs/facteo/addresses/get/2.json");
 	}
 	
@@ -28,7 +26,7 @@ public class TestWebService extends WebService {
 		get(r, "http://pcreafhdtions.fr/labs/facteo/addresses/get/2.json");
 	}
 	
-	public void addAddress(RESTRequest r) {
-		post(r, "http://pcreations.fr/labs/facteo/addresses/add.json");
+	public void addAddress(RESTRequest r, Address a) {
+		post(r, "http://pcreations.fr/labs/facteo/addresses/add.json", a);
 	}
 }
