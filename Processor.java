@@ -94,6 +94,7 @@ public abstract class Processor {
 				try {
 					InputStream is = mParserFactory.getParser(resource.getClass()).parseToInputStream(resource);
 					//TODO afficher is
+					//Log.i(RestService.TAG, "INPUT STREAM NOTE = " + inputStreamToString(is));
 					mHttpRequestHandler.post(r, is);
 				} catch (ParsingException e) {
 					// TODO Auto-generated catch block
