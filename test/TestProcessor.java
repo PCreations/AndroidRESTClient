@@ -1,12 +1,11 @@
 package com.pcreations.restclient.test;
 
-import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.sql.SQLException;
 
 import android.util.Log;
 
+import com.pcreations.restclient.DaoAccess;
 import com.pcreations.restclient.HTTPVerb;
 import com.pcreations.restclient.Processor;
 import com.pcreations.restclient.RESTRequest;
@@ -30,7 +29,17 @@ public class TestProcessor extends Processor {
 			if(r.getResourceName().equals("Address")) {
 				try {
 					Address a = mAddressParser.parse(resultStream);
-					//TODO SAVE ADDRESS AND SAVE NOTE WITH SETADDRESS
+					//TODO SAVE NOTE WITH SETADDRESS
+					DaoAccess<ResourceRepresentation<?>> noteDao = mDaoFactory.getDao(Note.class);
+					for(Note n : a.getNotes()) {
+						n.setAddress(a);
+						try {
+							noteDao.updateOrCreate(n);
+						} catch (SQLException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+					}
 					r.setResourceRepresentation(a);
 					Log.i(RestService.TAG, "ADDRESS = " + a.toString());
 				} catch (ParsingException e) {
