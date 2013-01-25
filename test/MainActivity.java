@@ -13,7 +13,7 @@ import com.pcreations.restclient.RestService;
 public class MainActivity extends Activity  {
 
 	private TestWebService ws;
-	private RESTRequest<Address> getAddress;
+	private RESTRequest<Note> addNoteRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,8 +21,8 @@ public class MainActivity extends Activity  {
         Log.e(RestService.TAG, "START");
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
-        getAddress = ws.newRequest(Address.class);
-        ws.getAddress(getAddress);
+        addNoteRequest = ws.newRequest(Note.class);
+        ws.addNote(addNoteRequest, new Note(5, "Je suis une NOTE", 0, true, null));
         /*DatabaseManager.init(getApplicationContext());
         ORMLiteDaoFactory daoFactory = new ORMLiteDaoFactory();
         DaoAccess<ResourceRepresentation<?>> daoAddress = daoFactory.getDao(Address.class);
@@ -56,13 +56,13 @@ public class MainActivity extends Activity  {
     public void onResume() {
     	super.onResume();
     	
-    	getAddress.setOnFinishedRequestListener(new OnFinishedRequestListener() {
+    	addNoteRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
 
 			@Override
 			public void onFinishedRequest(int resultCode) {
 				// TODO Auto-generated method stub
 				Log.d(RestService.TAG, "POST REQUEST resultCode = " + String.valueOf(resultCode));
-				Log.d(RestService.TAG, "POST REQUEST terminée : " + getAddress.toString());
+				Log.d(RestService.TAG, "POST REQUEST terminée : " + addNoteRequest.toString());
 			}
     	});
     	
@@ -70,7 +70,7 @@ public class MainActivity extends Activity  {
     
     public void onPause() {
     	super.onPause();
-    	getAddress.setOnFinishedRequestListener(null);
+    	addNoteRequest.setOnFinishedRequestListener(null);
     }
 
 }

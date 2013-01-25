@@ -1,10 +1,10 @@
 package com.pcreations.restclient;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -12,19 +12,27 @@ import android.util.Log;
 
 import com.pcreations.restclient.HttpRequestHandler.ProcessorCallback;
 import com.pcreations.restclient.exceptions.DaoFactoryNotInitializedException;
+import com.pcreations.restclient.test.ParsingException;
 
 public abstract class Processor {
 
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
 	protected DaoFactory mDaoFactory; //could be a DatabaseHelper;
+	protected Parser<?> mParser;
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
 		setDaoFactory();
+		setParser();
 	}
 
 	abstract public void setDaoFactory();
+	abstract public void setParser();
+	
+	final protected void setSimpleJacksonParser() {
+		mParser = new SimpleJacksonParser(ResourceRepresentation.class);
+	}
 	
 	abstract protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream);
 	
@@ -85,12 +93,22 @@ public abstract class Processor {
 				mHttpRequestHandler.get(r);
 				break;
 			case POST:
-				mHttpRequestHandler.post(r, stringToInputStream("{\"Address\":{\"name\":\"18 rue du Ponceau\"}}"));
+				ResourceRepresentation<?> resource = r.getResourceRepresentation();
+				try {
+					InputStream is = mParser.parseToInputStream(resource);
+					//TODO afficher is
+					Log.i(RestService.TAG, "INPUT STREAM = " + inputStreamToString(is));
+					mHttpRequestHandler.post(r, is);
+				} catch (ParsingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
 		}
 		Log.i(RestService.TAG, "processRequest end");
 	}
 	
-	private InputStream stringToInputStream(String str) {
+	/*private InputStream stringToInputStream(String str) {
     	// convert String into InputStream
     	InputStream is = new ByteArrayInputStream(str.getBytes());
      
@@ -115,8 +133,38 @@ public abstract class Processor {
 		}
     	
     	return null;
-    }
+    }*/
 	
+	private String inputStreamToString(InputStream is) {
+        BufferedReader bufferedReader;
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			StringBuilder inputStringBuilder = new StringBuilder();
+	        String line;
+			try {
+				line = bufferedReader.readLine();
+				while(line != null){
+		            inputStringBuilder.append(line);inputStringBuilder.append('\n');
+		            try {
+						line = bufferedReader.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
+				return inputStringBuilder.toString();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return null;
+	}
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream) {
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback start");
 		postProcess(request, resultStream);

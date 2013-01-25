@@ -15,13 +15,8 @@ import com.pcreations.restclient.SimpleJacksonParser;
 
 public class TestProcessor extends Processor {
 
-	private SimpleJacksonParser mAddressParser;
-	private SimpleJacksonParser mNoteParser;
-	
 	public TestProcessor() {
 		super();
-		mAddressParser = new SimpleJacksonParser(Address.class);
-		mNoteParser = new SimpleJacksonParser(Note.class);
 	}
 	
 	@Override
@@ -31,7 +26,7 @@ public class TestProcessor extends Processor {
 			Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
 			if(r.getResourceName().equals("Address")) {
 				try {
-					Address a = (Address) mAddressParser.parse(resultStream);
+					Address a = (Address) mParser.parseToObject(resultStream);
 					//TODO SAVE NOTE WITH SETADDRESS
 					DaoAccess<ResourceRepresentation<?>> noteDao = mDaoFactory.getDao(Note.class);
 					for(Note n : a.getNotes()) {
@@ -58,6 +53,11 @@ public class TestProcessor extends Processor {
 	public void setDaoFactory() {
 		// TODO Auto-generated method stub
 		mDaoFactory = new ORMLiteDaoFactory();
+	}
+
+	@Override
+	public void setParser() {
+		setSimpleJacksonParser();
 	}
 	
 	/*private String inputStreamToString(InputStream is) throws IOException {

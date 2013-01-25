@@ -1,10 +1,15 @@
 package com.pcreations.restclient;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 
 import android.util.Log;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -35,7 +40,7 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 		Log.i(RestService.TAG, "Simple class Name JacksonParser = " + mSimpleClassName);
 	}
 	
-	public ResourceRepresentation<?> parse(InputStream content) throws ParsingException{
+	public ResourceRepresentation<?> parseToObject(InputStream content) throws ParsingException{
 		ResourceRepresentation<?> JSONObjResponse = null;
 		try {
 			JSONObjResponse = (ResourceRepresentation<?>) mJSONMapper.readValue(content, mClazz);
@@ -56,6 +61,27 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 		return JSONObjResponse;
 	}
 	
+	@Override
+	public <R extends ResourceRepresentation<?>> InputStream parseToInputStream(R resource) throws ParsingException {
+		ByteArrayOutputStream JSONstream = new ByteArrayOutputStream();
+		try {
+			mJSONMapper.writeValue(JSONstream, resource);
+		} catch (JsonGenerationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonMappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(mResultCode != 0)
+			throw new ParsingException(mResultCode);
+		
+		return new ByteArrayInputStream(JSONstream.toByteArray());
+	}
+	
 	protected void setResultCode(int resultCode) {
 		mResultCode = resultCode;
 	}
@@ -66,5 +92,5 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 	public int getResultCode() {
 		return mResultCode;
 	}
-	
+
 }
