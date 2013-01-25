@@ -1,15 +1,17 @@
-package com.pcreations.restclient.test;
+package com.pcreations.restclient;
 
 import java.io.IOException;
 import java.io.InputStream;
+
+import android.util.Log;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.pcreations.restclient.ResourceRepresentation;
+import com.pcreations.restclient.test.ParsingException;
 
-public class SimpleJacksonParser<T extends ResourceRepresentation<?>> {
+public class SimpleJacksonParser {
 
 	
 	
@@ -19,22 +21,25 @@ public class SimpleJacksonParser<T extends ResourceRepresentation<?>> {
 	public final static int PARSER_KO_JSON_OBJETS_INVALID = -3;
 	public ObjectMapper mJSONMapper;
 	protected int mResultCode;
-	protected Class<T> mClazz;
+	protected String mSimpleClassName;
+	protected Class<?> mClazz;
 	
-	public SimpleJacksonParser()
+	public <T extends ResourceRepresentation<?>> SimpleJacksonParser(Class<T> clazz)
 	{
 		super();
 		mJSONMapper = new ObjectMapper(); // can reuse, share globally
 		mJSONMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		mJSONMapper.configure(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY, true);
 		mResultCode = 0;
-		
+		mClazz = clazz;
+		mSimpleClassName = clazz.getSimpleName();
+		Log.i(RestService.TAG, "Simple class Name JacksonParser = " + mSimpleClassName);
 	}
 	
-	public T parse(InputStream content) throws ParsingException{
-		T JSONObjResponse = null;
+	public ResourceRepresentation<?> parse(InputStream content) throws ParsingException{
+		ResourceRepresentation<?> JSONObjResponse = null;
 		try {
-			JSONObjResponse = mJSONMapper.readValue(content, mClazz);
+			JSONObjResponse = (ResourceRepresentation<?>) mJSONMapper.readValue(content, mClazz);
 			setResultCode(DATA_OK);
 		} catch (JsonParseException e) {
 			setResultCode(PARSER_KO_JSON_MALFORMED);
