@@ -87,8 +87,6 @@ public class HttpRequestHandler {
 	}
 	
 	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request, final InputStream holder) {
-		Log.i(RestService.TAG, "Holder");
-		Log.i(RestService.TAG, holder.toString());
 		new Thread(new Runnable() {
 	        public void run() {
 	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
@@ -317,9 +315,7 @@ public class HttpRequestHandler {
 			if(mRequest instanceof HttpPost || mRequest instanceof HttpPut) {
 				mRequest.setHeader("Accept", "application/json");
 				mRequest.setHeader("Content-type", "application/json");
-				Log.i(RestService.TAG, "Holder execute");
-				Log.i(RestService.TAG, "{\"Address\":{\"name\":\"18 rue du Ponceau\"}}");
-				StringEntity se = new StringEntity("{\"Address\":{\"name\":\"18 rue du Ponceau\", \"distribution_center_id\":1}}");
+				StringEntity se = new StringEntity(inputStreamToString(holder));
 				if(mRequest instanceof HttpPost)
 					((HttpPost) mRequest).setEntity(se);
 				else
@@ -327,6 +323,37 @@ public class HttpRequestHandler {
 				return mHttpClient.execute(mRequest, mHttpContext);
 			}
 			return null;
+		}
+		
+		private String inputStreamToString(InputStream is) {
+	        BufferedReader bufferedReader;
+			try {
+				bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				StringBuilder inputStringBuilder = new StringBuilder();
+		        String line;
+				try {
+					line = bufferedReader.readLine();
+					while(line != null){
+			            inputStringBuilder.append(line);inputStringBuilder.append('\n');
+			            try {
+							line = bufferedReader.readLine();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			        }
+					return inputStringBuilder.toString();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        return null;
 		}
 		
 	}

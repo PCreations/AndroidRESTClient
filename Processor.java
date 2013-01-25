@@ -19,7 +19,7 @@ public abstract class Processor {
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
 	protected DaoFactory mDaoFactory; //could be a DatabaseHelper;
-	protected Parser<?> mParser;
+	protected Parser<?> mParser; //TODO create parserFactory
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
@@ -97,7 +97,6 @@ public abstract class Processor {
 				try {
 					InputStream is = mParser.parseToInputStream(resource);
 					//TODO afficher is
-					Log.i(RestService.TAG, "INPUT STREAM = " + inputStreamToString(is));
 					mHttpRequestHandler.post(r, is);
 				} catch (ParsingException e) {
 					// TODO Auto-generated catch block
@@ -135,38 +134,11 @@ public abstract class Processor {
     	return null;
     }*/
 	
-	private String inputStreamToString(InputStream is) {
-        BufferedReader bufferedReader;
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-			StringBuilder inputStringBuilder = new StringBuilder();
-	        String line;
-			try {
-				line = bufferedReader.readLine();
-				while(line != null){
-		            inputStringBuilder.append(line);inputStringBuilder.append('\n');
-		            try {
-						line = bufferedReader.readLine();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-		        }
-				return inputStringBuilder.toString();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-	        
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-        
-        return null;
-	}
+	
 	protected void handleHttpRequestHandlerCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream) {
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback start");
+		/*Log.i(RestService.TAG, "RESPONSE SERVER JSON = " + inputStreamToString(resultStream));
+		Log.i(RestService.TAG, "Breakpoint");*/
 		postProcess(request, resultStream);
 		//TODO setup StrategyProcess to decide what to do here
 		//By default store object
@@ -229,6 +201,37 @@ public abstract class Processor {
 			e.printStackTrace();
 		}
 		return true;
+	}
+	
+	private String inputStreamToString(InputStream is) {
+        BufferedReader bufferedReader;
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			StringBuilder inputStringBuilder = new StringBuilder();
+	        String line;
+			try {
+				line = bufferedReader.readLine();
+				while(line != null){
+		            inputStringBuilder.append(line);inputStringBuilder.append('\n');
+		            try {
+						line = bufferedReader.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
+				return inputStringBuilder.toString();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return null;
 	}
 
 }

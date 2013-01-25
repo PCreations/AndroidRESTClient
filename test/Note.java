@@ -95,7 +95,7 @@ public class Note implements ResourceRepresentation<Integer> {
 
 	@Override
 	public String toString() {
-		return "Note [content=" + content+"]";
+		return "Note [content=" + content+"], [privacy = "+String.valueOf(privacy)+"], [problem = " + String.valueOf(problem) + "], [transactingFlag = " + String.valueOf(transactingFlag) +"], [state = " + String.valueOf(state) +"], [resultCode = " + String.valueOf(resultCode)+"]";
 	}
 
 	@Override

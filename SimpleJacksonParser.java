@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcreations.restclient.test.ParsingException;
 
-public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
+public class SimpleJacksonParser<T extends ResourceRepresentation<?>> implements Parser<T>{
 
 	
 	public final static int DATA_OK = 0;
@@ -26,9 +26,9 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 	public ObjectMapper mJSONMapper;
 	protected int mResultCode;
 	protected String mSimpleClassName;
-	protected Class<?> mClazz;
+	protected Class<T> mClazz;
 	
-	public <T extends ResourceRepresentation<?>> SimpleJacksonParser(Class<T> clazz)
+	public SimpleJacksonParser(Class<T> clazz)
 	{
 		super();
 		mJSONMapper = new ObjectMapper(); // can reuse, share globally
@@ -40,10 +40,10 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 		Log.i(RestService.TAG, "Simple class Name JacksonParser = " + mSimpleClassName);
 	}
 	
-	public ResourceRepresentation<?> parseToObject(InputStream content) throws ParsingException{
-		ResourceRepresentation<?> JSONObjResponse = null;
+	public T parseToObject(InputStream content) throws ParsingException{
+		T JSONObjResponse = null;
 		try {
-			JSONObjResponse = (ResourceRepresentation<?>) mJSONMapper.readValue(content, mClazz);
+			JSONObjResponse = mJSONMapper.readValue(content, mClazz);
 			setResultCode(DATA_OK);
 		} catch (JsonParseException e) {
 			setResultCode(PARSER_KO_JSON_MALFORMED);
@@ -62,7 +62,7 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 	}
 	
 	@Override
-	public <R extends ResourceRepresentation<?>> InputStream parseToInputStream(R resource) throws ParsingException {
+	public InputStream parseToInputStream(ResourceRepresentation<?> resource) throws ParsingException {
 		ByteArrayOutputStream JSONstream = new ByteArrayOutputStream();
 		try {
 			mJSONMapper.writeValue(JSONstream, resource);
