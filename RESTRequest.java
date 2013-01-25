@@ -5,13 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.http.message.BasicHeader;
-
 import android.os.Bundle;
 
-enum HTTPVerb { GET, POST, PUT, DELETE };
-
-public class RESTRequest implements Serializable {
+public class RESTRequest<T extends ResourceRepresentation<?>> implements Serializable {
 	
 	/**
 	 * 
@@ -23,17 +19,12 @@ public class RESTRequest implements Serializable {
 	private String mUrl;
 	private Bundle mExtraParams;
 	private List<SerializableHeader> mHeaders;
-	private ResourceRepresentation mResourceRepresentation;
+	private T mResourceRepresentation;
+	private String mResourceName; 
 	
-	public RESTRequest(UUID id) {
+	public RESTRequest(UUID id, Class<T> clazz) {
 		mID = id;
-	}
-	
-	public RESTRequest(HTTPVerb verb, UUID id, String url) {
-		super();
-		mVerb = verb;
-		mID = id;
-		mUrl = url;
+		mResourceName = clazz.getSimpleName();
 		mHeaders = new ArrayList<SerializableHeader>();
 	}
 	
@@ -84,13 +75,17 @@ public class RESTRequest implements Serializable {
 		this.mVerb = mVerb;
 	}
 	
-	public ResourceRepresentation getResourceRepresentation() {
+	public T getResourceRepresentation() {
 		return mResourceRepresentation;
 	}
+	
+	public String getResourceName() {
+		return mResourceName;
+	}
 
-	public void setResourceRepresentation(
-			ResourceRepresentation mResourceRepresentation) {
-		this.mResourceRepresentation = mResourceRepresentation;
+	@SuppressWarnings("unchecked")
+	public void setResourceRepresentation(ResourceRepresentation<?> mResourceRepresentation) {
+		this.mResourceRepresentation = (T) mResourceRepresentation;
 	}
 
 	public void setExtraParams(Bundle extraParams) {
@@ -98,21 +93,9 @@ public class RESTRequest implements Serializable {
 	}
 	
 	public String toString() {
-		return "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl+", resource = "+mResourceRepresentation.toString();
+		String str =  "Request[id] = "+mID.toString()+", verb="+mVerb.name()+"url="+mUrl;
+		str += null != mResourceRepresentation ? mResourceRepresentation.toString() : "";
+		return str;
 	}
-	
-	public class SerializableHeader extends BasicHeader implements Serializable {
 
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -3589739936804187767L;
-		
-		public SerializableHeader(String name, String value) {
-			super(name, value);
-			// TODO Auto-generated constructor stub
-		}
-		
-	}
-	
 }
