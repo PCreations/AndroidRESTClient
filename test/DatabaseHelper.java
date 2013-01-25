@@ -11,17 +11,17 @@ import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 import com.pcreations.restclient.DaoAccess;
-import com.pcreations.restclient.ResourceDaoGetter;
 import com.pcreations.restclient.ResourceRepresentation;
 
 
-public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceDaoGetter<ResourceRepresentation> {
+public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	private static final String DATABASE_NAME = "testDB.db";
 	// Si on change la version la base doit se mettre à jour et réinstalle toutes les tables. Cela permet de ne pas avoir à effacer les données manuellement sur le téléphone
-	private static final int DATABASE_VERSION = 26;
+	private static final int DATABASE_VERSION = 96;
 	// DAO pour l'objet Personne - la clé dans la base est un int donc on met Integer en second
-	private DaoAccess<ResourceRepresentation> testResourceDao = null;
+	private DaoAccess<ResourceRepresentation<Integer>> addressDao = null;
+	private DaoAccess<ResourceRepresentation<Integer>> noteDao = null;
 	
 	public DatabaseHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -33,7 +33,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceD
 		int i = 1;
 		try {
 			// Ici on doit mettre toutes les tables de notre base en lui envoyant sa classe associée
-			TableUtils.createTable(connectionSource, TestResource.class); i++;
+			TableUtils.createTable(connectionSource, Address.class); i++;
+			TableUtils.createTable(connectionSource, Note.class); i++;
 		} catch (SQLException e) {
 			Log.e(DatabaseHelper.class.getName(), "Impossible de créer la table num " + i, e);
 		}
@@ -46,7 +47,8 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceD
 	public void onUpgrade(SQLiteDatabase sqliteDatabase, ConnectionSource connectionSource, int oldVer, int newVer) {
 		try {
 			// On détruit toutes les tables et leur contenu
-			TableUtils.dropTable(connectionSource, TestResource.class, true);
+			TableUtils.dropTable(connectionSource, Address.class, true);
+			TableUtils.dropTable(connectionSource, Note.class, true);
 
 			// Puis on les recrée
 			onCreate(sqliteDatabase, connectionSource);
@@ -55,16 +57,26 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper implements ResourceD
 		}
 	}
 
-	@Override
-	public DaoAccess<ResourceRepresentation> getResourceDao() {
-		if(null == testResourceDao) {
+	public DaoAccess<ResourceRepresentation<Integer>> getAddressDao() {
+		if(null == addressDao) {
 			try {
-				testResourceDao = DaoManager.createDao(getConnectionSource(), TestResource.class);
+				addressDao = DaoManager.createDao(getConnectionSource(), Address.class);
 			}catch(java.sql.SQLException e) {
 				e.printStackTrace();
 			}
 		}
-		return testResourceDao;
+		return addressDao;
+	}
+	
+	public DaoAccess<ResourceRepresentation<Integer>> getNoteDao() {
+		if(null == noteDao) {
+			try {
+				noteDao = DaoManager.createDao(getConnectionSource(), Note.class);
+			}catch(java.sql.SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return noteDao;
 	}
 }
 

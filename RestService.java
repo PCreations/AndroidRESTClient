@@ -1,5 +1,8 @@
 package com.pcreations.restclient;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import android.app.IntentService;
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,6 +10,7 @@ import android.os.ResultReceiver;
 import android.util.Log;
 
 import com.pcreations.restclient.Processor.RESTServiceCallback;
+import com.pcreations.restclient.exceptions.DaoFactoryNotInitializedException;
 
 public class RestService extends IntentService{
 	
@@ -15,37 +19,46 @@ public class RestService extends IntentService{
 	public final static String INTENT_KEY = "com.pcreations.restclient.restservice.INTENT_KEY";
 	public final static String TAG = "com.pcreations.restclient.restservice";
 	private static Processor processor = null;
-	private Intent mIntent;
+	private HashMap<UUID, Intent> mIntentsMap;
 	
 	public RestService() {
 		super("RestService");
+		mIntentsMap = new HashMap<UUID, Intent>();
 	}
 
 	@Override
 	protected void onHandleIntent(Intent intent){
-		Log.d(TAG, "onHandleIntent()");
+		Bundle bundle = intent.getExtras();
+		@SuppressWarnings("unchecked")
+		RESTRequest<? extends ResourceRepresentation<?>> r = (RESTRequest<? extends ResourceRepresentation<?>>) bundle.getSerializable(RestService.REQUEST_KEY);
+		mIntentsMap.put(r.getID(), intent);
+		Log.e(RestService.TAG, "onHandleIntent() "+ String.valueOf(r.getID()));
 		RestService.processor.setRESTServiceCallback(new RESTServiceCallback() {
 
 			@Override
-			public void callAction(int statusCode, RESTRequest r) {
+			public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> r) {
 				// TODO Auto-generated method stub
 				handleRESTServiceCallback(statusCode, r);
 			}
      
         });
-		mIntent = intent;
-		Bundle bundle = intent.getExtras();
-		RESTRequest r = (RESTRequest) bundle.getSerializable(RestService.REQUEST_KEY);
-        RestService.processor.preRequestProcess(r);
+        try {
+			RestService.processor.preRequestProcess(r);
+		} catch (DaoFactoryNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
-	private void handleRESTServiceCallback(int statusCode, RESTRequest r) {
-		Bundle bundle = mIntent.getExtras();
+	private void handleRESTServiceCallback(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> r) {
+		Intent currentIntent = mIntentsMap.get(r.getID());
+		Bundle bundle = currentIntent.getExtras();
 		ResultReceiver receiver = bundle.getParcelable(RestService.RECEIVER_KEY);
-		Log.e(RestService.TAG, "resource dans handleRESTServiceCallback = " + r.getResourceRepresentation().toString());
+		//Log.e(RestService.TAG, "resource dans handleRESTServiceCallback = " + r.getResourceRepresentation().toString());
 		Bundle resultData = new Bundle();
         resultData.putSerializable(RestService.REQUEST_KEY, r);
-        resultData.putParcelable(RestService.INTENT_KEY, mIntent);
+        resultData.putParcelable(RestService.INTENT_KEY, currentIntent);
+        Log.i(RestService.TAG, "send");
         receiver.send(statusCode, resultData);
 	}
 	

@@ -3,6 +3,7 @@ package com.pcreations.restclient.test;
 import android.content.Context;
 
 import com.pcreations.restclient.RESTRequest;
+import com.pcreations.restclient.ResourceRepresentation;
 import com.pcreations.restclient.WebService;
 
 public class TestWebService extends WebService {
@@ -18,9 +19,15 @@ public class TestWebService extends WebService {
 		mProcessor = new TestProcessor();
 	}
 
-	public void test(RESTRequest r) {
-		mCurrentResource = new TestResource("test", 1);
-		get(r, "http://pcreations.fr/labs/facteo/distribution_centers/get/1.json");
+	public void getAddress(RESTRequest<? extends ResourceRepresentation<?>> r) {
+		get(r, "http://pcreations.fr/labs/facteo/addresses/get/2.json");
 	}
-
+	
+	public void failed(RESTRequest<? extends ResourceRepresentation<?>> r) {
+		get(r, "http://pcreafhdtions.fr/labs/facteo/addresses/get/2.json");
+	}
+	
+	public void addAddress(RESTRequest<? extends ResourceRepresentation<?>> r, Address a) {
+		post(r, "http://pcreations.fr/labs/facteo/addresses/add.json", a);
+	}
 }
