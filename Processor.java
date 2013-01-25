@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import android.util.Log;
@@ -19,20 +20,16 @@ public abstract class Processor {
 	protected HttpRequestHandler mHttpRequestHandler;
 	protected RESTServiceCallback mRESTServiceCallback;
 	protected DaoFactory mDaoFactory; //could be a DatabaseHelper;
-	protected Parser<?> mParser; //TODO create parserFactory
+	protected ParserFactory mParserFactory;
 	
 	public Processor() {
 		mHttpRequestHandler = new HttpRequestHandler();
 		setDaoFactory();
-		setParser();
+		setParserFactory();
 	}
 
 	abstract public void setDaoFactory();
-	abstract public void setParser();
-	
-	final protected void setSimpleJacksonParser() {
-		mParser = new SimpleJacksonParser(ResourceRepresentation.class);
-	}
+	abstract public void setParserFactory();
 	
 	abstract protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream);
 	
@@ -95,7 +92,7 @@ public abstract class Processor {
 			case POST:
 				ResourceRepresentation<?> resource = r.getResourceRepresentation();
 				try {
-					InputStream is = mParser.parseToInputStream(resource);
+					InputStream is = mParserFactory.getParser(resource.getClass()).parseToInputStream(resource);
 					//TODO afficher is
 					mHttpRequestHandler.post(r, is);
 				} catch (ParsingException e) {

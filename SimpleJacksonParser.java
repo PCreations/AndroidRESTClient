@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcreations.restclient.test.ParsingException;
 
-public class SimpleJacksonParser<T extends ResourceRepresentation<?>> implements Parser<T>{
+public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 
 	
 	public final static int DATA_OK = 0;
@@ -26,9 +26,9 @@ public class SimpleJacksonParser<T extends ResourceRepresentation<?>> implements
 	public ObjectMapper mJSONMapper;
 	protected int mResultCode;
 	protected String mSimpleClassName;
-	protected Class<T> mClazz;
+	protected Class<?> mClazz;
 	
-	public SimpleJacksonParser(Class<T> clazz)
+	public <T extends ResourceRepresentation<?>> SimpleJacksonParser(Class<T> clazz)
 	{
 		super();
 		mJSONMapper = new ObjectMapper(); // can reuse, share globally
@@ -40,10 +40,10 @@ public class SimpleJacksonParser<T extends ResourceRepresentation<?>> implements
 		Log.i(RestService.TAG, "Simple class Name JacksonParser = " + mSimpleClassName);
 	}
 	
-	public T parseToObject(InputStream content) throws ParsingException{
-		T JSONObjResponse = null;
+	public ResourceRepresentation<?> parseToObject(InputStream content) throws ParsingException{
+		ResourceRepresentation<?> JSONObjResponse = null;
 		try {
-			JSONObjResponse = mJSONMapper.readValue(content, mClazz);
+			JSONObjResponse = (ResourceRepresentation<?>) mJSONMapper.readValue(content, mClazz);
 			setResultCode(DATA_OK);
 		} catch (JsonParseException e) {
 			setResultCode(PARSER_KO_JSON_MALFORMED);
@@ -62,7 +62,7 @@ public class SimpleJacksonParser<T extends ResourceRepresentation<?>> implements
 	}
 	
 	@Override
-	public InputStream parseToInputStream(ResourceRepresentation<?> resource) throws ParsingException {
+	public <R extends ResourceRepresentation<?>> InputStream parseToInputStream(R resource) throws ParsingException {
 		ByteArrayOutputStream JSONstream = new ByteArrayOutputStream();
 		try {
 			mJSONMapper.writeValue(JSONstream, resource);
