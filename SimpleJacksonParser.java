@@ -11,9 +11,8 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pcreations.restclient.test.ParsingException;
 
-public class SimpleJacksonParser {
+public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 
-	
 	
 	public final static int DATA_OK = 0;
 	public final static int PARSER_KO = -1;
