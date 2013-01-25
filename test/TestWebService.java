@@ -19,8 +19,12 @@ public class TestWebService extends WebService {
 		mProcessor = new TestProcessor();
 	}
 
-	public void getAddress(RESTRequest<? extends ResourceRepresentation<?>> r) {
+	public void getAddress(RESTRequest<Address> r) {
 		get(r, "http://pcreations.fr/labs/facteo/addresses/get/2.json");
+	}
+	
+	public void addNote(RESTRequest<Note> r, Note n) {
+		post(r, "http://pcreations.fr/labs/facteo/notes/add.json", n);
 	}
 	
 	public void failed(RESTRequest<? extends ResourceRepresentation<?>> r) {

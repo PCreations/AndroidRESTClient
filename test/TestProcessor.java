@@ -14,11 +14,13 @@ import com.pcreations.restclient.RestService;
 
 public class TestProcessor extends Processor {
 
-	private AddressParser mAddressParser;
+	private SimpleJacksonParser<Address> mAddressParser;
+	private SimpleJacksonParser<Note> mNoteParser;
 	
 	public TestProcessor() {
 		super();
-		mAddressParser = new AddressParser();
+		mAddressParser = new SimpleJacksonParser<Address>();
+		mNoteParser = new SimpleJacksonParser<Note>();
 	}
 	
 	@Override
