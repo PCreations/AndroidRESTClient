@@ -92,5 +92,9 @@ public class SimpleJacksonParser implements Parser<ResourceRepresentation<?>>{
 	public int getResultCode() {
 		return mResultCode;
 	}
+	
+	public ObjectMapper getObjectMapper() {
+		return mJSONMapper;
+	}
 
 }
