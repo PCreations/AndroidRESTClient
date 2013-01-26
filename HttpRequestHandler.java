@@ -150,7 +150,7 @@ public class HttpRequestHandler {
 	    			StatusLine responseStatus = response.getStatusLine();
 	    			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 	    			IS = responseEntity.getContent();
-	    			Log.e(RestService.TAG, "IS RESPONSE SERVER = " + inputStreamToString(IS));
+	    			//Log.e(RestService.TAG, "IS RESPONSE SERVER = " + inputStreamToString(IS));
 	    		} catch (ClientProtocolException e) {
 	    			// TODO Auto-generated catch block
 	    			statusCode = CLIENT_PROTOCOL_EXCEPTION;

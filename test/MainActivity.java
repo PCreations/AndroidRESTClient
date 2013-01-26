@@ -1,13 +1,17 @@
 package com.pcreations.restclient.test;
 
+import java.sql.SQLException;
+
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 
 import com.pcreations.rest.R;
+import com.pcreations.restclient.DaoAccess;
 import com.pcreations.restclient.RESTRequest;
 import com.pcreations.restclient.RESTRequest.OnFinishedRequestListener;
+import com.pcreations.restclient.ResourceRepresentation;
 import com.pcreations.restclient.RestService;
 
 public class MainActivity extends Activity  {
@@ -22,7 +26,34 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
         addNoteRequest = ws.newRequest(Note.class);
-        ws.addNote(addNoteRequest, new Note(5, "Je suis une NOTE", 0, true, null));
+        ORMLiteDaoFactory daoFactory = new ORMLiteDaoFactory();
+        DaoAccess<ResourceRepresentation<?>> daoAddress = daoFactory.getDao(Address.class);
+        try {
+			Address a = (Address) daoAddress.findById(2);
+			Log.i(RestService.TAG, "Address = " + a.toString());
+			Note n = new Note(5, "blabla note", 0, true, a.getId());
+			ws.addNote(addNoteRequest, n);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        /*try {
+			Address a = new Address(2, null, null);
+			Note n = new Note(5, "Je suis une NOTE", 0, true, a);
+			Collection<Note> cn = new ArrayList<Note>();
+			cn.add(n);
+			a.setNotes(cn);
+			DatabaseManager.getInstance().getHelper().getAddressDao().updateOrCreate(a);
+			ws.addNote(addNoteRequest, n);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (DatabaseManagerNotInitializedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+        
         /*DatabaseManager.init(getApplicationContext());
         ORMLiteDaoFactory daoFactory = new ORMLiteDaoFactory();
         DaoAccess<ResourceRepresentation<?>> daoAddress = daoFactory.getDao(Address.class);

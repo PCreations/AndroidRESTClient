@@ -164,7 +164,7 @@ public abstract class Processor {
 	}
 
 	public boolean checkRequest(RESTRequest<? extends ResourceRepresentation<?>> request) {
-		Log.e(RestService.TAG, "LISTE RESOURCES = ");
+		/*Log.e(RestService.TAG, "LISTE RESOURCES = ");
 		List<ResourceRepresentation<?>> resourcesList;
 		ResourceRepresentation<?> requestResource = request.getResourceRepresentation();
 		DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(requestResource.getClass());
@@ -197,7 +197,7 @@ public abstract class Processor {
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 		return true;
 	}
 	

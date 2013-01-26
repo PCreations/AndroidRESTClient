@@ -75,7 +75,7 @@ public class Address implements ResourceRepresentation<Integer> {
 	
 	@Override
 	public String toString() {
-		String str = "Address [name=" + addressName +"]";
+		String str = "Address [id=" + String.valueOf(id) + "], [name=" + addressName +"]";
 		if(null != notes) {
 			for(Note n : notes) {
 				str += n.toString();
