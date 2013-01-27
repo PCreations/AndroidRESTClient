@@ -1,10 +1,12 @@
 package com.pcreations.restclient.test;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.pcreations.restclient.ResourceRepresentation;
 
 @DatabaseTable(tableName = "notes", daoClass=NoteDao.class) // annotation pour le nom de la table SQL
+@JsonSerialize(using=NoteJsonSerializer.class)
 public class Note implements ResourceRepresentation<Integer> {
 	
 	/**
@@ -113,7 +115,7 @@ public class Note implements ResourceRepresentation<Integer> {
 
 	@Override
 	public String toString() {
-		return "Note [content=" + content+"], [privacy = "+String.valueOf(privacy)+"], [problem = " + String.valueOf(problem) + "], [transactingFlag = " + String.valueOf(transactingFlag) +"], [state = " + String.valueOf(state) +"], [resultCode = " + String.valueOf(resultCode)+"]";
+		return "Note [content=" + content+"], [privacy = "+String.valueOf(privacy)+"], [problem = " + String.valueOf(problem) + "], [address_id = " + String.valueOf(address_id) + "[transactingFlag = " + String.valueOf(transactingFlag) +"], [state = " + String.valueOf(state) +"], [resultCode = " + String.valueOf(resultCode)+"]";
 	}
 
 	@Override

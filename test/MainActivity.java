@@ -32,6 +32,7 @@ public class MainActivity extends Activity  {
 			Address a = (Address) daoAddress.findById(2);
 			Log.i(RestService.TAG, "Address = " + a.toString());
 			Note n = new Note(5, "blabla note", 0, true, a.getId());
+			Log.i(RestService.TAG, "Note = " + n.toString());
 			ws.addNote(addNoteRequest, n);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block

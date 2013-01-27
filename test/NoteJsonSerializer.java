@@ -12,18 +12,17 @@ public class NoteJsonSerializer extends JsonSerializer<Note>{
 	@Override
 	public void serialize(Note value, JsonGenerator jgen, SerializerProvider provider)
 			throws IOException, JsonProcessingException {
-		jgen.writeStartArray();
-			jgen.writeArrayFieldStart("Note");
-			jgen.writeStartArray();
-				jgen.writeNumberField("id", value.getId());
-				jgen.writeNumberField("address_id", value.getAddress().getId());
-				jgen.writeStringField("content", value.getContent());
-				jgen.writeStringField("privacy", String.valueOf(value.getPrivacy()));
-				jgen.writeStringField("problem", String.valueOf(value.getProblem()));
-			jgen.writeEndArray();
-		jgen.writeEndArray();
+		jgen.writeStartObject();
+			jgen.writeFieldName("Note");
+				jgen.writeStartObject();
+					jgen.writeNumberField("address_id", value.getAddress_id());
+					jgen.writeStringField("content", value.getContent());
+					jgen.writeStringField("privacy", String.valueOf(value.getPrivacy()));
+					jgen.writeStringField("problem", String.valueOf(value.getProblem()));
+				jgen.writeEndObject();
+		jgen.writeEndObject();
+		jgen.close();
 		
 	}
-
-
+	
 }
