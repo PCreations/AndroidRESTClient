@@ -81,6 +81,18 @@ public class HttpRequestHandler {
 		}
 	}
 	
+	public void put(RESTRequest<? extends ResourceRepresentation<?>> r, InputStream holder) {
+		try {
+			httpRequests.put(r.getID(), new HTTPContainer(new HttpPut(r.getUrl()), new URI(r.getUrl()), r.getHeaders()));
+			processRequest(r, holder);
+		} catch (URISyntaxException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			mProcessorCallback.callAction(URI_SYNTAX_EXCEPTION, r, null);
+		}
+		
+	}
+	
 	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request, final InputStream holder) {
 		new Thread(new Runnable() {
 	        public void run() {

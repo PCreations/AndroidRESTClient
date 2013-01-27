@@ -61,6 +61,13 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		initAndStartService(r);
 	}
 	
+	protected void put(RESTRequest<?> r, String string, ResourceRepresentation<?> resource) {
+		Log.e(RestService.TAG, "WebService.put("+string+")");
+		r.setResourceRepresentation(resource);
+		initRequest(r, HTTPVerb.PUT,  string);
+		initAndStartService(r);
+	}
+	
 	protected void initRequest(RESTRequest<?> r, HTTPVerb verb, String uri) {
 		r.setVerb(verb);
 		r.setUrl(uri);

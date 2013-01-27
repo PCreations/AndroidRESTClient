@@ -85,12 +85,12 @@ public abstract class Processor {
 			
 		});
 		//TODO handle other verb
+		ResourceRepresentation<?> resource = r.getResourceRepresentation();
 		switch(r.getVerb()) {
 			case GET:
 				mHttpRequestHandler.get(r);
 				break;
 			case POST:
-				ResourceRepresentation<?> resource = r.getResourceRepresentation();
 				try {
 					InputStream is = mParserFactory.getParser(resource.getClass()).parseToInputStream(resource);
 					//TODO afficher is
@@ -101,6 +101,18 @@ public abstract class Processor {
 					e.printStackTrace();
 				}
 				break;
+			case PUT:
+				try {
+					InputStream is = mParserFactory.getParser(resource.getClass()).parseToInputStream(resource);
+					//TODO afficher is
+					//Log.i(RestService.TAG, "INPUT STREAM NOTE = " + inputStreamToString(is));
+					mHttpRequestHandler.put(r, is);
+				} catch (ParsingException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				break;
+				
 		}
 		Log.i(RestService.TAG, "processRequest end");
 	}
