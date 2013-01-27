@@ -31,7 +31,7 @@ public abstract class Processor {
 	abstract public void setDaoFactory();
 	abstract public void setParserFactory();
 	
-	abstract protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream);
+	abstract protected <T extends ResourceRepresentation<?>> int postProcess(int statusCode, RESTRequest<T> r, InputStream resultStream);
 	
 	protected void preRequestProcess(RESTRequest<? extends ResourceRepresentation<?>> r) throws DaoFactoryNotInitializedException {
 		//GESTION BDD
@@ -137,22 +137,26 @@ public abstract class Processor {
 		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback start");
 		/*Log.i(RestService.TAG, "RESPONSE SERVER JSON = " + inputStreamToString(resultStream));
 		Log.i(RestService.TAG, "Breakpoint");*/
-		postProcess(request, resultStream);
-		//TODO setup StrategyProcess to decide what to do here
-		//By default store object
-		try {
-			if(WebService.FLAG_RESOURCE && request.getResourceRepresentation() != null) {
-				ResourceRepresentation<?> resource = request.getResourceRepresentation();
-				DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(resource.getClass());
-				dao.updateOrCreate(request.getResourceRepresentation());
-				Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
-			}
+		if(postProcess(statusCode, request, resultStream) != statusCode) {
 			mRESTServiceCallback.callAction(statusCode, request);
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
-		Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback end");
+		else {
+			//TODO setup StrategyProcess to decide what to do here
+			//By default store object
+			try {
+				if(WebService.FLAG_RESOURCE && request.getResourceRepresentation() != null) {
+					ResourceRepresentation<?> resource = request.getResourceRepresentation();
+					DaoAccess<ResourceRepresentation<?>> dao = mDaoFactory.getDao(resource.getClass());
+					dao.updateOrCreate(request.getResourceRepresentation());
+					Log.d(RestService.TAG, "handleHttpRequestHandlerCallback");
+				}
+				mRESTServiceCallback.callAction(statusCode, request);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			Log.i(RestService.TAG, "handleHTTpREquestHandlerCallback end");
+		}
 	}
 	
 	public void setRESTServiceCallback(RESTServiceCallback callback) {

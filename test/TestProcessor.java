@@ -26,7 +26,7 @@ public class TestProcessor extends Processor {
 	}
 	
 	@Override
-	protected <T extends ResourceRepresentation<?>> void postProcess(RESTRequest<T> r, InputStream resultStream) {
+	protected <T extends ResourceRepresentation<?>> int postProcess(int statusCode, RESTRequest<T> r, InputStream resultStream) {
 		//resultStream.
 		if(r.getVerb() == HTTPVerb.GET) {
 			Log.i(RestService.TAG, "postProcess start + resource class = " + r.getResourceName());
@@ -50,10 +50,12 @@ public class TestProcessor extends Processor {
 				} catch (ParsingException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
+					return -10;
 				}
 			}
 			Log.i(RestService.TAG, "postProcess end");
 		}
+		return statusCode;
 	}
 
 	@Override
