@@ -1,10 +1,12 @@
 package com.pcreations.restclient.test;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 import com.pcreations.restclient.ResourceRepresentation;
 
 @DatabaseTable(tableName = "notes", daoClass=NoteDao.class) // annotation pour le nom de la table SQL
+@JsonSerialize(using=NoteJsonSerializer.class)
 public class Note implements ResourceRepresentation<Integer> {
 	
 	/**
@@ -36,6 +38,8 @@ public class Note implements ResourceRepresentation<Integer> {
 	@DatabaseField
 	private int state;
 	
+	private int address_id;
+	
 	@DatabaseField
 	private int resultCode;
 	
@@ -47,6 +51,15 @@ public class Note implements ResourceRepresentation<Integer> {
 		this.privacy = privacy;
 		this.problem = problem;
 		this.address = address;
+	}
+	
+	public Note(int id, String content, long privacy, boolean problem, int address_id){
+		this.id = id;
+		this.content = content;
+		this.privacy = privacy;
+		this.problem = problem;
+		this.address = null;
+		this.address_id = address_id;
 	}
 
 	/* GETTERS AND SETTERS */
@@ -92,10 +105,17 @@ public class Note implements ResourceRepresentation<Integer> {
 		this.address = address;
 	}
 
+	public int getAddress_id() {
+		return address_id;
+	}
+
+	public void setAddress_id(int address_id) {
+		this.address_id = address_id;
+	}
 
 	@Override
 	public String toString() {
-		return "Note [content=" + content+"]";
+		return "Note [content=" + content+"], [privacy = "+String.valueOf(privacy)+"], [problem = " + String.valueOf(problem) + "], [address_id = " + String.valueOf(address_id) + "[transactingFlag = " + String.valueOf(transactingFlag) +"], [state = " + String.valueOf(state) +"], [resultCode = " + String.valueOf(resultCode)+"]";
 	}
 
 	@Override

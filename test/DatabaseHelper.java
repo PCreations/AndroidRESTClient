@@ -18,7 +18,7 @@ public class DatabaseHelper extends OrmLiteSqliteOpenHelper {
 	
 	private static final String DATABASE_NAME = "testDB.db";
 	// Si on change la version la base doit se mettre à jour et réinstalle toutes les tables. Cela permet de ne pas avoir à effacer les données manuellement sur le téléphone
-	private static final int DATABASE_VERSION = 96;
+	private static final int DATABASE_VERSION = 136;
 	// DAO pour l'objet Personne - la clé dans la base est un int donc on met Integer en second
 	private DaoAccess<ResourceRepresentation<Integer>> addressDao = null;
 	private DaoAccess<ResourceRepresentation<Integer>> noteDao = null;

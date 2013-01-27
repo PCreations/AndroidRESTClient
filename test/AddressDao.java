@@ -2,6 +2,7 @@ package com.pcreations.restclient.test;
 
 
 import java.sql.SQLException;
+import java.util.List;
 
 import com.j256.ormlite.dao.BaseDaoImpl;
 import com.j256.ormlite.support.ConnectionSource;
@@ -22,6 +23,11 @@ public class AddressDao extends BaseDaoImpl<Address, Integer> implements DaoAcce
 	@Override
 	public <ID> Address findById(ID resourceId) throws SQLException {
 		return queryForId((Integer) resourceId);
+	}
+	
+	@Override
+	public List<Address> queryForAll() throws SQLException {
+		return super.queryForAll();
 	}
 
 }

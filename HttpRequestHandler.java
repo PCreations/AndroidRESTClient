@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.Reader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -17,10 +16,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.http.Header;
-import org.apache.http.HeaderElement;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
 import org.apache.http.StatusLine;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
@@ -35,10 +32,8 @@ import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.protocol.HttpContext;
 
-import android.net.ParseException;
 import android.util.Log;
 
 public class HttpRequestHandler {
@@ -87,11 +82,9 @@ public class HttpRequestHandler {
 	}
 	
 	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request, final InputStream holder) {
-		Log.i(RestService.TAG, "Holder");
-		Log.i(RestService.TAG, holder.toString());
 		new Thread(new Runnable() {
 	        public void run() {
-	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
+	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST YEAH");
 	    		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
 	    		HttpResponse response = null;
 	    		HttpEntity responseEntity = null;
@@ -103,6 +96,7 @@ public class HttpRequestHandler {
 	    			StatusLine responseStatus = response.getStatusLine();
 	    			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 	    			IS = responseEntity.getContent();
+	    			Log.e(RestService.TAG, "IS SERVER = " + inputStreamToString(IS));
 	    		} catch (ClientProtocolException e) {
 	    			// TODO Auto-generated catch block
 	    			statusCode = CLIENT_PROTOCOL_EXCEPTION;
@@ -143,9 +137,8 @@ public class HttpRequestHandler {
 	}
 	
 	private void processRequest(final RESTRequest<? extends ResourceRepresentation<?>> request) {
-		new Thread(new Runnable() {
-	        public void run() {
-	        	Log.e(RestService.TAG, "PROCESS HTTP REQUEST");
+		//new Thread(new Runnable() {
+	        //public void run() {
 	    		HTTPContainer currentHttpContainer = httpRequests.get(request.getID());
 	    		HttpResponse response = null;
 	    		HttpEntity responseEntity = null;
@@ -157,6 +150,7 @@ public class HttpRequestHandler {
 	    			StatusLine responseStatus = response.getStatusLine();
 	    			statusCode                = responseStatus != null ? responseStatus.getStatusCode() : 0;
 	    			IS = responseEntity.getContent();
+	    			//Log.e(RestService.TAG, "IS RESPONSE SERVER = " + inputStreamToString(IS));
 	    		} catch (ClientProtocolException e) {
 	    			// TODO Auto-generated catch block
 	    			statusCode = CLIENT_PROTOCOL_EXCEPTION;
@@ -193,86 +187,8 @@ public class HttpRequestHandler {
 	    			}
 	    		}
 	        }
-	    }).start();
-	}
-	
-	/*private String getContentBody(HttpEntity entity, InputStream instream) throws UnsupportedEncodingException {
-		if (instream == null) { return ""; }
-
-		if (entity.getContentLength() > Integer.MAX_VALUE) { throw new IllegalArgumentException(
-
-		"HTTP entity too large to be buffered in memory"); }
-
-		String charset = getContentCharSet(entity);
-
-		if (charset == null) {
-
-		charset = HTTP.DEFAULT_CONTENT_CHARSET;
-
-		}
-
-		Reader reader = new InputStreamReader(instream, charset);
-
-		StringBuilder buffer = new StringBuilder();
-
-		try {
-
-		char[] tmp = new char[1024];
-
-		int l;
-
-		try {
-			while ((l = reader.read(tmp)) != -1) {
-
-			buffer.append(tmp, 0, l);
-
-			}
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		} finally {
-
-		try {
-			reader.close();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		}
-
-		return buffer.toString();
-	}
-	
-	private String getContentCharSet(final HttpEntity entity) throws ParseException {
-
-		if (entity == null) { throw new IllegalArgumentException("HTTP entity may not be null"); }
-
-		String charset = null;
-
-		if (entity.getContentType() != null) {
-
-		HeaderElement values[] = entity.getContentType().getElements();
-
-		if (values.length > 0) {
-
-		NameValuePair param = values[0].getParameterByName("charset");
-
-		if (param != null) {
-
-		charset = param.getValue();
-
-		}
-
-		}
-
-		}
-
-		return charset;
-
-		}*/
+	    //}).start();
+	//}
 	
 	public interface ProcessorCallback {
 		abstract public void callAction(int statusCode, RESTRequest<? extends ResourceRepresentation<?>> request, InputStream resultStream);
@@ -317,11 +233,12 @@ public class HttpRequestHandler {
 			if(mRequest instanceof HttpPost || mRequest instanceof HttpPut) {
 				mRequest.setHeader("Accept", "application/json");
 				mRequest.setHeader("Content-type", "application/json");
-				Log.i(RestService.TAG, "Holder execute");
-				Log.i(RestService.TAG, "{\"Address\":{\"name\":\"18 rue du Ponceau\"}}");
-				StringEntity se = new StringEntity("{\"Address\":{\"name\":\"18 rue du Ponceau\", \"distribution_center_id\":1}}");
-				if(mRequest instanceof HttpPost)
+				String str = inputStreamToString(holder);
+				StringEntity se = new StringEntity(str);
+				Log.i(RestService.TAG, "STRING ENTITY = " + str);
+				if(mRequest instanceof HttpPost) {
 					((HttpPost) mRequest).setEntity(se);
+				}
 				else
 					((HttpPut) mRequest).setEntity(se);
 				return mHttpClient.execute(mRequest, mHttpContext);
@@ -329,6 +246,68 @@ public class HttpRequestHandler {
 			return null;
 		}
 		
+		private String inputStreamToString(InputStream is) {
+	        BufferedReader bufferedReader;
+			try {
+				bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+				StringBuilder inputStringBuilder = new StringBuilder();
+		        String line;
+				try {
+					line = bufferedReader.readLine();
+					while(line != null){
+			            inputStringBuilder.append(line);inputStringBuilder.append('\n');
+			            try {
+							line = bufferedReader.readLine();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+			        }
+					return inputStringBuilder.toString();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+		        
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        return null;
+		}
+		
+	}
+	
+	private String inputStreamToString(InputStream is) {
+        BufferedReader bufferedReader;
+		try {
+			bufferedReader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+			StringBuilder inputStringBuilder = new StringBuilder();
+	        String line;
+			try {
+				line = bufferedReader.readLine();
+				while(line != null){
+		            inputStringBuilder.append(line);inputStringBuilder.append('\n');
+		            try {
+						line = bufferedReader.readLine();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+		        }
+				return inputStringBuilder.toString();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+        
+        return null;
 	}
 	
 }
