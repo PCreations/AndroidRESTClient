@@ -11,7 +11,6 @@ public class DatabaseManager {
 	static private DatabaseManager instance;
  
 	static public void init(Context context) {
-		Log.d(RestService.TAG, "DatabaseManager.init()");
 		if(null==instance) {
 			instance = new DatabaseManager(context);
 		}
