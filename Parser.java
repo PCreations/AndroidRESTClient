@@ -2,7 +2,7 @@ package com.pcreations.restclient;
 
 import java.io.InputStream;
 
-import com.pcreations.restclient.test.ParsingException;
+import com.pcreations.restclient.exceptions.ParsingException;
 
 public interface Parser<T extends ResourceRepresentation<?>> {
 
