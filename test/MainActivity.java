@@ -18,6 +18,7 @@ public class MainActivity extends Activity  {
 
 	private TestWebService ws;
 	private RESTRequest<Note> addNoteRequest;
+	private RESTRequest<Address> getAddressRequest;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -26,14 +27,21 @@ public class MainActivity extends Activity  {
         setContentView(R.layout.activity_main);
         ws = new TestWebService(this);
         addNoteRequest = ws.newRequest(Note.class);
+        getAddressRequest = ws.newRequest(Address.class);
+        //ws.getAddress(getAddressRequest);
         ORMLiteDaoFactory daoFactory = new ORMLiteDaoFactory();
         DaoAccess<ResourceRepresentation<?>> daoAddress = daoFactory.getDao(Address.class);
         try {
 			Address a = (Address) daoAddress.findById(2);
 			Log.i(RestService.TAG, "Address = " + a.toString());
-			Note n = new Note(5, "blabla note", 0, true, a.getId());
+			Note n = new Note(5, "blabla note blibli", null, false, Long.valueOf("352376054950629"), true, a, 0);
+			try {
+				ws.addNote(addNoteRequest, n);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			Log.i(RestService.TAG, "Note = " + n.toString());
-			ws.addNote(addNoteRequest, n);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -98,11 +106,22 @@ public class MainActivity extends Activity  {
 			}
     	});
     	
+    	getAddressRequest.setOnFinishedRequestListener(new OnFinishedRequestListener() {
+
+			@Override
+			public void onFinishedRequest(int resultCode) {
+				// TODO Auto-generated method stub
+				Log.d(RestService.TAG, "GET REQUEST resultCode = " + String.valueOf(resultCode));
+				Log.d(RestService.TAG, "GET REQUEST terminée : " + addNoteRequest.toString());
+			}
+    	});
+    	
     }
     
     public void onPause() {
     	super.onPause();
     	addNoteRequest.setOnFinishedRequestListener(null);
+    	getAddressRequest.setOnFinishedRequestListener(null);
     }
 
 }

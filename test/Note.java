@@ -17,14 +17,22 @@ public class Note implements ResourceRepresentation<Integer> {
 	public static final String ADDRESS_ID = "address_id";
 
 	@DatabaseField(id=true)
-
 	private int id;
 	
 	@DatabaseField
 	private String content;
 	
+	@DatabaseField(canBeNull = true)
+	private String picture;
+	
 	@DatabaseField
-	private long privacy;
+	private boolean privacy;
+	
+	@DatabaseField
+	private long imei;
+	
+	@DatabaseField
+	private int order;
 	
 	@DatabaseField
 	private boolean problem;
@@ -45,25 +53,19 @@ public class Note implements ResourceRepresentation<Integer> {
 	
 	public Note() {}
 	
-	public Note(int id, String content, long privacy, boolean problem, Address address){
+	public Note(int id, String content, String picture, boolean privacy, long imei, boolean problem, Address address, int order){
 		this.id = id;
 		this.content = content;
+		this.picture = picture;
 		this.privacy = privacy;
+		this.imei = imei;
 		this.problem = problem;
 		this.address = address;
-	}
-	
-	public Note(int id, String content, long privacy, boolean problem, int address_id){
-		this.id = id;
-		this.content = content;
-		this.privacy = privacy;
-		this.problem = problem;
-		this.address = null;
-		this.address_id = address_id;
+		this.order = order;
 	}
 
 	/* GETTERS AND SETTERS */
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -81,14 +83,38 @@ public class Note implements ResourceRepresentation<Integer> {
 		this.content = content;
 	}
 	
-	public long getPrivacy() {
+	public boolean getPrivacy() {
 		return privacy;
 	}
 
-	public void setPrivacy(long privacy) {
+	public void setPrivacy(boolean privacy) {
 		this.privacy = privacy;
 	}
 	
+	public String getPicture() {
+		return picture;
+	}
+
+	public long getImei() {
+		return imei;
+	}
+
+	public int getOrder() {
+		return order;
+	}
+
+	public void setPicture(String picture) {
+		this.picture = picture;
+	}
+
+	public void setImei(long imei) {
+		this.imei = imei;
+	}
+
+	public void setOrder(int order) {
+		this.order = order;
+	}
+
 	public boolean getProblem() {
 		return problem;
 	}
@@ -115,7 +141,7 @@ public class Note implements ResourceRepresentation<Integer> {
 
 	@Override
 	public String toString() {
-		return "Note [content=" + content+"], [privacy = "+String.valueOf(privacy)+"], [problem = " + String.valueOf(problem) + "], [address_id = " + String.valueOf(address_id) + "[transactingFlag = " + String.valueOf(transactingFlag) +"], [state = " + String.valueOf(state) +"], [resultCode = " + String.valueOf(resultCode)+"]";
+		return "Note "+id+"[isProblem="+problem+"] [privacy="+privacy+"] [imei="+imei+"] [content=" + content+"] [picture="+picture+"] [order="+order+"]";
 	}
 
 	@Override

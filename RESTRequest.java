@@ -20,7 +20,9 @@ public class RESTRequest<T extends ResourceRepresentation<?>> implements Seriali
 	private Bundle mExtraParams;
 	private List<SerializableHeader> mHeaders;
 	private T mResourceRepresentation;
-	private String mResourceName; 
+	private String mResourceName;
+	protected transient OnFinishedRequestListener mOnFinishedRequestListener;
+	protected transient OnFailedRequestListener mOnFailedRequestListener;
 	
 	public RESTRequest(UUID id, Class<T> clazz) {
 		mID = id;
@@ -37,10 +39,14 @@ public class RESTRequest<T extends ResourceRepresentation<?>> implements Seriali
 		mHeaders = new ArrayList<SerializableHeader>();
 	}
 
-	protected OnFinishedRequestListener mOnFinishedRequestListener;
+	
 	
 	public void setOnFinishedRequestListener(OnFinishedRequestListener listener) {
 		mOnFinishedRequestListener = listener;
+	}
+	
+	public void setOnFailedRequestListener(OnFailedRequestListener listener) {
+		mOnFailedRequestListener = listener;
 	}
 
 	public UUID getID() {
@@ -51,13 +57,21 @@ public class RESTRequest<T extends ResourceRepresentation<?>> implements Seriali
 		return mHeaders;
 	}
 
-	public OnFinishedRequestListener getListener() {
+	public OnFinishedRequestListener getOnFinishedRequestListener() {
 		return mOnFinishedRequestListener;
+	}
+	
+	public OnFailedRequestListener getOnFailedRequestListener() {
+		return mOnFailedRequestListener;
 	}
 	
 	public interface OnFinishedRequestListener {
         public abstract void onFinishedRequest(int resultCode);
     }
+	
+	public interface OnFailedRequestListener {
+		public abstract void onFailedRequest(int resultCode);
+	}
 
 	public String getUrl() {
 		return mUrl;

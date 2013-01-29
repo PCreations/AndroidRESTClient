@@ -23,7 +23,7 @@ public class TestWebService extends WebService {
 		get(r, "http://pcreations.fr/labs/facteo/addresses/get/2.json");
 	}
 	
-	public void addNote(RESTRequest<Note> r, Note n) {
+	public void addNote(RESTRequest<Note> r, Note n) throws Exception {
 		post(r, "http://pcreations.fr/labs/facteo/notes/add.json", n);
 	}
 	

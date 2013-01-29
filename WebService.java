@@ -118,10 +118,19 @@ public abstract class WebService implements RestResultReceiver.Receiver{
 		for(Iterator<RESTRequest<?>> it = mRequestCollection.iterator(); it.hasNext();) {
 			RESTRequest<?> request = it.next();
 			if(request.getID().equals(r.getID())) {
-				if(request.getListener() != null) {
-					request.setResourceRepresentation(r.getResourceRepresentation());
-					request.getListener().onFinishedRequest(resultCode);
+				if(resultCode == 200) {
+					if(request.getOnFinishedRequestListener() != null) {
+						request.setResourceRepresentation(r.getResourceRepresentation());
+						request.getOnFinishedRequestListener().onFinishedRequest(resultCode);
+					}
 				}
+				else {
+					if(request.getOnFailedRequestListener() != null) {
+						request.setResourceRepresentation(r.getResourceRepresentation());
+						request.getOnFailedRequestListener().onFailedRequest(resultCode);
+					}
+				}
+				
 				Intent i = resultData.getParcelable(RestService.INTENT_KEY);
 				mContext.stopService(i);
 				if(resultCode == 200)
